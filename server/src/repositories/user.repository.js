@@ -30,11 +30,22 @@ class UserRepository {
     return result.rows[0];
   }
 
-  async create({ username, passwordHash, roleId, studentId = null, lecturerId = null }) {
+  async findByEmail(email) {
     const result = await db.query(
-      `INSERT INTO UserAccount (username, password_hash, role_id, student_id, lecturer_id)
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [username, passwordHash, roleId, studentId, lecturerId]
+      `SELECT ua.*, r.role_name
+       FROM UserAccount ua
+       LEFT JOIN Role r ON ua.role_id = r.role_id
+       WHERE ua.email = $1`,
+      [email]
+    );
+    return result.rows[0];
+  }
+
+  async create({ username, email, passwordHash, roleId = 1, studentId = null, lecturerId = null }) {
+    const result = await db.query(
+      `INSERT INTO UserAccount (username, password_hash, role_id, student_id, lecturer_id, email)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [username, passwordHash, roleId, studentId, lecturerId, email]  // ✅ fixed order
     );
     return result.rows[0];
   }
