@@ -30,7 +30,11 @@ export const ENDPOINTS = {
   USERS: `${API_BASE_URL}/users`,
   STUDENTS: `${API_BASE_URL}/students`,
   LECTURERS: `${API_BASE_URL}/lecturers`,
-  CLASSES: `${API_BASE_URL}/classes`,
+  CLASSES: {
+    ALL: `${API_BASE_URL}/classes`,
+    BY_STUDENT: (studentId) => `${API_BASE_URL}/classes/student/${studentId}`,
+    COUNT_BY_STUDENT: (studentId) => `${API_BASE_URL}/classes/student/${studentId}/count`,
+  },
   COURSES: `${API_BASE_URL}/courses`,
   COURSE_ASSIGNMENTS: `${API_BASE_URL}/course-assignments`,
   FACULTIES: `${API_BASE_URL}/faculties`,

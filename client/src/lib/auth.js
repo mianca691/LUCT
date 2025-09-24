@@ -19,7 +19,7 @@ export const isAuthenticated = () => !!getToken();
 
 export const getUserRole = () => {
   const user = getUser();
-  return user?.role || null;
+  return user?.role_name || null;
 };
 
 export const hasRole = (roles = []) => {

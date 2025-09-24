@@ -19,7 +19,7 @@ class AuthService {
 
     // Sign JWT
     const token = jwt.sign(
-      { id: user.user_id, role: user.role_id }, // or role_name if you prefer
+      { id: user.user_id, role: user.role_name }, // or role_name if you prefer
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );

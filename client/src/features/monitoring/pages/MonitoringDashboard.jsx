@@ -26,16 +26,12 @@ export default function MonitoringDashboard() {
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-semibold">Monitoring Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <MonitoringCard title="Total Classes" value={stats.totalClasses} />
-        <MonitoringCard
-          title="Average Attendance"
-          value={`${stats.avgAttendance}%`}
-        />
-        <MonitoringCard
-          title="Low Attendance (<50%)"
-          value={stats.lowAttendanceCount}
-        />
+      <div className="flex flex-1 flex-col">
+          <div className="@container/main flex flex-1 flex-col gap-2">
+            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+              <MonitoringCard />
+            </div>
+          </div>
       </div>
 
       <AttendanceAnalytics />

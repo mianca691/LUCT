@@ -26,7 +26,7 @@ export default function AuthForm({ type = "login", onSubmit }) {
         <img src="/assets/logo.jpg" alt="Logo" className="h-60 w-60 object-contain" />
       </div>
 
-      <Card className="w-full max-w-md mx-auto shadow-md">
+      <Card className="w-full max-w-md mx-auto shadow-2xl">
         <CardHeader>
           <h2 className="text-xl font-semibold text-center">
             {type === "login" ? "Login" : "Register"}
