@@ -26,9 +26,8 @@ app.use(
 // Routes
 app.use('/auth', authRoutes);
 
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
+app.get("/ping", (req, res) => {
+  res.json({ message: "pong" });
 });
 
 module.exports = app;
