@@ -1,5 +1,5 @@
 import Sidebar from "@/components/layout/SideBar.jsx";
-import Navbar from "@/components/layout/Navbar.jsx";
+import Navbar from "@/components/layout/NavBar.jsx";
 
 export default function DashboardLayout({ children }) {
   return (
