@@ -1,6 +1,0 @@
-CREATE TABLE Course (
-    course_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    course_code VARCHAR(20) UNIQUE NOT NULL,
-    course_name VARCHAR(100) NOT NULL,
-    faculty_id INT NOT NULL REFERENCES Faculty(faculty_id) ON DELETE CASCADE
-);

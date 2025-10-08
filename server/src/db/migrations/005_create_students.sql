@@ -1,6 +1,0 @@
-CREATE TABLE Student (
-    student_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    student_name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE,
-    faculty_id INT NOT NULL REFERENCES Faculty(faculty_id) ON DELETE CASCADE
-);

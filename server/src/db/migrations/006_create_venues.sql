@@ -1,5 +1,0 @@
-CREATE TABLE Venue (
-    venue_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    venue_name VARCHAR(50) UNIQUE NOT NULL,
-    capacity INT
-);

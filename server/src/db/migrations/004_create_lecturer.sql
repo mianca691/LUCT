@@ -1,6 +1,0 @@
-CREATE TABLE Lecturer (
-    lecturer_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    lecturer_name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE,
-    faculty_id INT NOT NULL REFERENCES Faculty(faculty_id) ON DELETE CASCADE
-);

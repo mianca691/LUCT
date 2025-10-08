@@ -1,5 +1,0 @@
-CREATE TABLE Program (
-    program_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    program_name VARCHAR(100) UNIQUE NOT NULL,
-    faculty_id INT NOT NULL REFERENCES Faculty(faculty_id) ON DELETE CASCADE
-);
