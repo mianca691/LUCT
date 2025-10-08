@@ -1,4 +1,4 @@
-import Sidebar from "@components/layout/Sidebar.jsx";
+import Sidebar from "@/components/layout/Sidebar.jsx";
 import Navbar from "@/components/layout/Navbar.jsx";
 
 export default function DashboardLayout({ children }) {
