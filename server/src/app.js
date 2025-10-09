@@ -6,22 +6,29 @@ import authRoutes from "./routes/authRoutes.js";
 import reportRoutes from "./routes/reportRoutes.js";
 import classRoutes from "./routes/classRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
+import studentRoutes from "./routes/studentRoutes.js";
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// Enable CORS
+app.use(cors({
+  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  credentials: true,
+}));
+
 app.use(express.json());
 
-// Routes
+// API Routes
 app.use("/auth", authRoutes);
 app.use("/reports", reportRoutes);
 app.use("/classes", classRoutes);
 app.use("/courses", courseRoutes);
+app.use("/student", studentRoutes);
 
-app.get("/ping", (req, res) => {
-  res.json({ message: "pong" });
-});
+// Health check
+app.get("/ping", (req, res) => res.json({ message: "pong" }));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}/`));
