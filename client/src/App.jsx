@@ -1,11 +1,11 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "@/contexts/AuthContext.jsx";
+import { Routes, Route, Navigate } from "react-router-dom"; 
+import { useAuth } from "@/contexts/AuthContext.jsx";
 import ProtectedRoute from "@/components/layout/ProtectedRoute.jsx";
 import DashboardLayout from "@/components/layout/DashboardLayout.jsx";
 
 import Home from "@/pages/Home.jsx";
-import Login from "@/pages/Login.jsx";
-import Register from "@/pages/Register.jsx";
+import Login from "@/pages/auth/Login.jsx";
+import Register from "@/pages/auth/Register.jsx";
 
 // Lecturer Pages
 import Classes from "@/pages/Lecturer/Classes.jsx";
@@ -25,9 +25,11 @@ import PLReports from "@/pages/PL/Reports.jsx";
 import Monitor from "@/pages/Student/Monitor.jsx";
 import Rating from "@/pages/Student/Rating.jsx";
 
-// Universal Dashboard Redirect based on role
+// Universal Dashboard Redirect
 function DashboardRedirect() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) return null; // wait until auth state is loaded
 
   if (!user) return <Navigate to="/login" replace />;
 
@@ -46,83 +48,56 @@ function DashboardRedirect() {
 }
 
 export default function App() {
+  const { loading } = useAuth();
+
+  if (loading) return null; // prevent rendering routes until auth state is ready
+
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
 
-          {/* Universal dashboard route */}
-          <Route path="/dashboard" element={<DashboardRedirect />} />
+      {/* Dashboard Redirect */}
+      <Route path="/dashboard" element={<DashboardRedirect />} />
 
-          {/* Lecturer Routes */}
-          <Route
-            path="/lecturer/*"
-            element={
-              <ProtectedRoute roles={["lecturer"]}>
-                <DashboardLayout>
-                  <Routes>
-                    <Route path="classes" element={<Classes />} />
-                    <Route path="reports" element={<Reports />} />
-                    <Route path="submit-report" element={<SubmitReport />} />
-                  </Routes>
-                </DashboardLayout>
-              </ProtectedRoute>
-            }
-          />
+      {/* Lecturer Routes */}
+      <Route element={<ProtectedRoute roles={["lecturer"]} />}>
+        <Route element={<DashboardLayout />}>
+          <Route path="/lecturer/classes" element={<Classes />} />
+          <Route path="/lecturer/reports" element={<Reports />} />
+          <Route path="/lecturer/submit-report" element={<SubmitReport />} />
+        </Route>
+      </Route>
 
-          {/* PRL Routes */}
-          <Route
-            path="/prl/*"
-            element={
-              <ProtectedRoute roles={["prl"]}>
-                <DashboardLayout>
-                  <Routes>
-                    <Route path="reports" element={<PRLReports />} />
-                    <Route path="feedback" element={<Feedback />} />
-                  </Routes>
-                </DashboardLayout>
-              </ProtectedRoute>
-            }
-          />
+      {/* PRL Routes */}
+      <Route element={<ProtectedRoute roles={["prl"]} />}>
+        <Route element={<DashboardLayout />}>
+          <Route path="/prl/reports" element={<PRLReports />} />
+          <Route path="/prl/feedback" element={<Feedback />} />
+        </Route>
+      </Route>
 
-          {/* PL Routes */}
-          <Route
-            path="/pl/*"
-            element={
-              <ProtectedRoute roles={["pl"]}>
-                <DashboardLayout>
-                  <Routes>
-                    <Route path="courses" element={<Courses />} />
-                    <Route path="assign-lectures" element={<AssignLectures />} />
-                    <Route path="reports" element={<PLReports />} />
-                  </Routes>
-                </DashboardLayout>
-              </ProtectedRoute>
-            }
-          />
+      {/* PL Routes */}
+      <Route element={<ProtectedRoute roles={["pl"]} />}>
+        <Route element={<DashboardLayout />}>
+          <Route path="/pl/courses" element={<Courses />} />
+          <Route path="/pl/assign-lectures" element={<AssignLectures />} />
+          <Route path="/pl/reports" element={<PLReports />} />
+        </Route>
+      </Route>
 
-          {/* Student Routes */}
-          <Route
-            path="/student/*"
-            element={
-              <ProtectedRoute roles={["student"]}>
-                <DashboardLayout>
-                  <Routes>
-                    <Route path="monitor" element={<Monitor />} />
-                    <Route path="rating" element={<Rating />} />
-                  </Routes>
-                </DashboardLayout>
-              </ProtectedRoute>
-            }
-          />
+      {/* Student Routes */}
+      <Route element={<ProtectedRoute roles={["student"]} />}>
+        <Route element={<DashboardLayout />}>
+          <Route path="/student/monitor" element={<Monitor />} />
+          <Route path="/student/rating" element={<Rating />} />
+        </Route>
+      </Route>
 
-          {/* Catch all unmatched routes */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
+      {/* Catch-all */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
