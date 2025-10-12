@@ -1,29 +1,37 @@
-import pkg from "pg";
-const { Pool } = pkg;
+import pg from "pg";
 import dotenv from "dotenv";
+
 dotenv.config();
 
-const pool = new Pool({
+const { Pool } = pg;
+
+// Create a shared connection pool
+export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
+  max: 10,
+  idleTimeoutMillis: 3000000,
+  connectionTimeoutMillis: 10000,
 });
 
-// Graceful error handling
-pool.on("error", (err) => {
-  console.error("Unexpected PG idle client error", err);
-});
-
-// Optional: test and reconnect
-async function testConnection() {
-  try {
-    const client = await pool.connect();
+// Simple connection test on startup
+pool
+  .connect()
+  .then((client) => {
     console.log("✅ Connected to PostgreSQL");
     client.release();
-  } catch (err) {
-    console.error("❌ Database connection failed:", err.message);
-  }
-}
+  })
+  .catch((err) => {
+    console.error("❌ DB connection error:", err.message);
+  });
 
-testConnection();
+// Handle idle disconnections gracefully
+pool.on("error", (err) => {
+  console.error("⚠️ Unexpected DB error, retrying:", err.message);
+  // optional: reinitialize pool or reconnect logic here
+});
 
 export default pool;
