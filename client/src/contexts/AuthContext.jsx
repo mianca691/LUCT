@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
@@ -13,7 +12,8 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem("token") || null);
   const [loading, setLoading] = useState(true);
 
-  // Persist user & token in localStorage
+  const [justLoggedOut, setJustLoggedOut] = useState(false);
+  
   useEffect(() => {
     if (user && token) {
       localStorage.setItem("user", JSON.stringify(user));
@@ -24,7 +24,6 @@ export function AuthProvider({ children }) {
     }
   }, [user, token]);
 
-  // Fetch current user on mount if token exists
   useEffect(() => {
     const fetchMe = async () => {
       if (!token) {
@@ -38,7 +37,7 @@ export function AuthProvider({ children }) {
         if (!res.ok) throw new Error("Failed to fetch user");
         const data = await res.json();
         setUser(data);
-      } catch (err) {
+      } catch {
         setUser(null);
         setToken(null);
       } finally {
@@ -63,19 +62,19 @@ export function AuthProvider({ children }) {
     const data = await res.json();
     setUser(data.user);
     setToken(data.token);
-
     return data.user;
   };
 
   const logout = () => {
     setUser(null);
     setToken(null);
+    setJustLoggedOut(true);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, loading, justLoggedOut, setJustLoggedOut }}>
       {children}
     </AuthContext.Provider>
   );

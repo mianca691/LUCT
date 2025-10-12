@@ -1,20 +1,26 @@
 import { useAuth } from "@/contexts/AuthContext.jsx";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react"; // shadcn uses lucide-react icons
+import { Menu } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar({ onToggleSidebar }) {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/", { replace: true });
+  };
 
   return (
     <header className="flex justify-between items-center bg-white shadow p-4">
-      {/* Left section with toggle and logo */}
       <div className="flex items-center gap-3">
         {user && (
           <Button
             variant="ghost"
             size="icon"
             onClick={onToggleSidebar}
-            className="md:hidden" // only show on mobile
+            className="md:hidden"
           >
             <Menu className="w-6 h-6" />
           </Button>
@@ -25,13 +31,12 @@ export default function Navbar({ onToggleSidebar }) {
         </div>
       </div>
 
-      {/* Right section: user info and logout */}
       {user && (
         <div className="flex items-center gap-4">
           <span className="font-medium text-gray-700 hidden sm:block">
             {user.name}
           </span>
-          <Button variant="outline" onClick={logout}>
+          <Button variant="outline" onClick={handleLogout}>
             Logout
           </Button>
         </div>

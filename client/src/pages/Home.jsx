@@ -30,7 +30,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-400 text-slate-900 flex flex-col">
-      {/* Hero Section */}
       <section className="flex flex-col md:flex-row items-center justify-between px-6 md:px-24 py-20">
         <motion.div
           initial={{ x: -100, opacity: 0 }}
@@ -79,7 +78,6 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Features Section */}
       <section className="px-6 md:px-24 py-16 bg-neutral-100 text-slate-900 rounded-t-3xl">
         <h2 className="text-3xl font-bold text-center mb-12">Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -97,7 +95,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="mt-auto py-6 text-center text-slate-900">
         &copy; {new Date().getFullYear()} LUCT Faculty Portal. All rights reserved.
       </footer>

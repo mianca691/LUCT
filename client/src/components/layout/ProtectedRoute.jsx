@@ -1,16 +1,22 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext.jsx";
 import { useEffect, useState } from "react";
 
 export default function ProtectedRoute({ roles }) {
-  const { user, loading } = useAuth();
+  const { user, loading, justLoggedOut, setJustLoggedOut } = useAuth();
   const [isChecking, setIsChecking] = useState(true);
+  const location = useLocation();
 
-  // Small delay to ensure localStorage / context rehydrates
   useEffect(() => {
     const timer = setTimeout(() => setIsChecking(false), 300);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (justLoggedOut && location.pathname === "/") {
+      setJustLoggedOut(false);
+    }
+  }, [justLoggedOut, location, setJustLoggedOut]);
 
   if (loading || isChecking) {
     return (
@@ -21,12 +27,12 @@ export default function ProtectedRoute({ roles }) {
     );
   }
 
-  // Not logged in
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) {
+    if (justLoggedOut) return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
+  }
 
-  // Role mismatch
   if (roles && !roles.includes(user.role)) return <Navigate to="/" replace />;
 
-  // All good — render nested routes
   return <Outlet />;
 }

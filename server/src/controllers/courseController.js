@@ -1,9 +1,8 @@
-import db from "../config/db.js";
+import pool from "../config/db.js";
 
-// Get all courses
 export const getAllCourses = async (req, res) => {
   try {
-    const result = await db.query(
+    const result = await pool.query(
       `SELECT courses.*, faculties.name AS faculty_name
        FROM courses
        JOIN faculties ON faculties.id = courses.faculty_id
@@ -16,11 +15,10 @@ export const getAllCourses = async (req, res) => {
   }
 };
 
-// Get a specific course
 export const getCourseById = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await db.query(
+    const result = await pool.query(
       `SELECT courses.*, faculties.name AS faculty_name
        FROM courses
        JOIN faculties ON faculties.id = courses.faculty_id
@@ -38,7 +36,6 @@ export const getCourseById = async (req, res) => {
   }
 };
 
-// Create a new course
 export const createCourse = async (req, res) => {
   try {
     const { faculty_id, name, code } = req.body;
@@ -46,7 +43,7 @@ export const createCourse = async (req, res) => {
     if (!faculty_id || !name || !code)
       return res.status(400).json({ error: "Missing required fields" });
 
-    const result = await db.query(
+    const result = await pool.query(
       `INSERT INTO courses (faculty_id, name, code)
        VALUES ($1, $2, $3)
        RETURNING *`,
@@ -60,13 +57,12 @@ export const createCourse = async (req, res) => {
   }
 };
 
-// Update a course
 export const updateCourse = async (req, res) => {
   try {
     const { id } = req.params;
     const { faculty_id, name, code } = req.body;
 
-    const result = await db.query(
+    const result = await pool.query(
       `UPDATE courses
        SET faculty_id = $1, name = $2, code = $3
        WHERE id = $4
@@ -84,12 +80,11 @@ export const updateCourse = async (req, res) => {
   }
 };
 
-// Delete a course
 export const deleteCourse = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const result = await db.query(
+    const result = await pool.query(
       "DELETE FROM courses WHERE id = $1 RETURNING *",
       [id]
     );

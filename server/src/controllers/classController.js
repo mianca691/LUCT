@@ -1,9 +1,8 @@
-import db from "../config/db.js"; // Sequelize instance or pg client
+import pool from "../config/db.js";
 
-// Get all classes
 export const getAllClasses = async (req, res) => {
   try {
-    const result = await db.query("SELECT * FROM classes ORDER BY id ASC");
+    const result = await pool.query("SELECT * FROM classes ORDER BY id ASC");
     res.json(result.rows);
   } catch (err) {
     console.error("Error fetching classes:", err);
@@ -11,11 +10,10 @@ export const getAllClasses = async (req, res) => {
   }
 };
 
-// Get a single class
 export const getClassById = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await db.query("SELECT * FROM classes WHERE id = $1", [id]);
+    const result = await pool.query("SELECT * FROM classes WHERE id = $1", [id]);
     if (result.rows.length === 0)
       return res.status(404).json({ error: "Class not found" });
     res.json(result.rows[0]);
@@ -25,11 +23,10 @@ export const getClassById = async (req, res) => {
   }
 };
 
-// Create new class
 export const createClass = async (req, res) => {
   try {
     const { course_id, lecturer_id, scheduled_time, venue } = req.body;
-    const result = await db.query(
+    const result = await pool.query(
       `INSERT INTO classes (course_id, lecturer_id, scheduled_time, venue)
        VALUES ($1, $2, $3, $4) RETURNING *`,
       [course_id, lecturer_id, scheduled_time, venue]
@@ -41,12 +38,11 @@ export const createClass = async (req, res) => {
   }
 };
 
-// Update class
 export const updateClass = async (req, res) => {
   try {
     const { id } = req.params;
     const { course_id, lecturer_id, scheduled_time, venue } = req.body;
-    const result = await db.query(
+    const result = await pool.query(
       `UPDATE classes
        SET course_id = $1, lecturer_id = $2, scheduled_time = $3, venue = $4
        WHERE id = $5 RETURNING *`,
@@ -61,11 +57,10 @@ export const updateClass = async (req, res) => {
   }
 };
 
-// Delete class
 export const deleteClass = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await db.query("DELETE FROM classes WHERE id = $1 RETURNING *", [id]);
+    const result = await pool.query("DELETE FROM classes WHERE id = $1 RETURNING *", [id]);
     if (result.rows.length === 0)
       return res.status(404).json({ error: "Class not found" });
     res.json({ message: "Class deleted successfully" });

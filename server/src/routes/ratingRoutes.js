@@ -4,8 +4,8 @@ import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/classes", authMiddleware, getAvailableClasses); // all classes for rating
-router.get("/my", authMiddleware, getMyRatings);             // student's own ratings
-router.post("/", authMiddleware, createRating);              // submit rating
+router.get("/classes", authMiddleware, getAvailableClasses);
+router.get("/my", authMiddleware, getMyRatings);
+router.post("/", authMiddleware, createRating);
 
 export default router;

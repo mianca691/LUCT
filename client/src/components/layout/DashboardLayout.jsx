@@ -23,7 +23,6 @@ export default function DashboardLayout() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        {/* Header */}
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-white">
           <SidebarTrigger className="-ml-1" />
           <Separator
@@ -31,7 +30,6 @@ export default function DashboardLayout() {
             className="mr-2 data-[orientation=vertical]:h-4"
           />
 
-          {/* Breadcrumb */}
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
@@ -58,8 +56,7 @@ export default function DashboardLayout() {
             </button>
           </div>
         </header>
-
-        {/* Main content renders nested routes */}
+        
         <main className="flex flex-1 flex-col gap-4 p-4 bg-gray-50 overflow-y-auto">
           <Outlet />
         </main>

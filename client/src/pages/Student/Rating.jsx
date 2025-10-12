@@ -18,10 +18,8 @@ export default function StudentRating() {
     rating: "",
     comment: "",
   });
-
   const [myRatings, setMyRatings] = useState([]);
 
-  // Fetch all courses on mount
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -34,12 +32,11 @@ export default function StudentRating() {
     fetchCourses();
   }, [token]);
 
-  // Fetch classes whenever courseId changes
   useEffect(() => {
     if (!form.courseId) return;
     const fetchClasses = async () => {
       try {
-        const res = await api.get("/ratings/classes", {
+        const res = await api.get(`/classes?course=${form.courseId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setClasses(res.data);
@@ -47,9 +44,9 @@ export default function StudentRating() {
         console.error("Failed to fetch classes", err);
       }
     };
+    fetchClasses();
   }, [form.courseId, token]);
 
-  // Fetch student's previous ratings
   useEffect(() => {
     const fetchMyRatings = async () => {
       try {
@@ -80,8 +77,8 @@ export default function StudentRating() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert("Rating submitted successfully!");
-      setForm({ ...form, classId: "", rating: "", comment: "" });
-      // Refresh previous ratings
+      setForm({ courseId: form.courseId, classId: "", rating: "", comment: "" });
+
       const res = await api.get("/ratings/my", { headers: { Authorization: `Bearer ${token}` } });
       setMyRatings(res.data);
     } catch (err) {
@@ -98,27 +95,34 @@ export default function StudentRating() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Select onValueChange={(val) => setForm({ ...form, courseId: val })} value={form.courseId}>
+            <Select
+              value={form.courseId}
+              onValueChange={(val) => setForm({ ...form, courseId: val, classId: "" })}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select Course" />
               </SelectTrigger>
               <SelectContent>
                 {courses.map((course) => (
-                  <SelectItem key={course.id} value={course.id}>
+                  <SelectItem key={course.id} value={String(course.id)}>
                     {course.name} ({course.code})
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
 
-            <Select onValueChange={(val) => setForm({ ...form, classId: val })} value={form.classId}>
+            <Select
+              value={form.classId}
+              onValueChange={(val) => setForm({ ...form, classId: val })}
+              disabled={!form.courseId}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select Class" />
               </SelectTrigger>
               <SelectContent>
                 {classes.map((cls) => (
-                  <SelectItem key={cls.id} value={cls.id}>
-                    {cls.venue} — {new Date(cls.scheduled_time).toLocaleString()}
+                  <SelectItem key={cls.id} value={String(cls.id)}>
+                    {cls.class_name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -137,6 +141,8 @@ export default function StudentRating() {
               placeholder="Comment (optional)"
               value={form.comment}
               onChange={(e) => setForm({ ...form, comment: e.target.value })}
+              rows={3}
+              className="w-full"
             />
 
             <Button type="submit" className="w-full mt-2">

@@ -1,6 +1,5 @@
 import { pool } from "../config/db.js";
 
-// Get all classes with course & lecturer info
 export const getAvailableClasses = async (req, res) => {
   try {
     const result = await pool.query(`
@@ -23,7 +22,6 @@ export const getAvailableClasses = async (req, res) => {
   }
 };
 
-// Create rating
 export const createRating = async (req, res) => {
   const { class_id, rating, comment } = req.body;
   const userId = req.user.id;
@@ -44,7 +42,6 @@ export const createRating = async (req, res) => {
   }
 };
 
-// Get student's past ratings
 export const getMyRatings = async (req, res) => {
   try {
     const userId = req.user.id;

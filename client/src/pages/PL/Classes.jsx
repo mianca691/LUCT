@@ -1,15 +1,15 @@
 import React from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
-export default function Reports() {
+export default function Classes() {
   return (
     <div className="p-6">
       <Card>
         <CardHeader>
-          <h2>Reports</h2>
+          <h2>Classes</h2>
         </CardHeader>
         <CardContent>
-          <p>PL Reports Page (Under Construction)</p>
+          <p>PL Classes Page (Under Construction)</p>
         </CardContent>
       </Card>
     </div>

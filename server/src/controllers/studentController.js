@@ -1,10 +1,5 @@
-// src/controllers/studentController.js
-import { pool } from "../config/db.js";
+import pool from "../config/db.js";
 
-/**
- * GET /student/attendance
- * Returns all attendance records relevant to the logged-in student
- */
 export const getStudentAttendance = async (req, res) => {
   try {
     const studentId = req.user.id;
@@ -33,11 +28,6 @@ export const getStudentAttendance = async (req, res) => {
   }
 };
 
-/**
- * POST /student/attendance
- * Used if students can mark attendance manually
- * Expects: { class_id, attended: true|false }
- */
 export const markAttendance = async (req, res) => {
   try {
     const studentId = req.user.id;
@@ -47,10 +37,8 @@ export const markAttendance = async (req, res) => {
       return res.status(400).json({ message: "class_id is required" });
     }
 
-    // Optionally create a new attendance table later, but for now, log entry
     console.log(`Student ${studentId} marked attendance for class ${class_id}: ${attended}`);
 
-    // For now, respond success (mock)
     res.json({ message: "Attendance recorded", success: true });
   } catch (err) {
     console.error("Error marking attendance:", err);

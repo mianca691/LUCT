@@ -2,57 +2,86 @@ import { useState, useEffect } from "react";
 import api from "@/services/api.js";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 
-export default function SubmitReport() {
+export default function LectureReport() {
   const [courses, setCourses] = useState([]);
   const [classes, setClasses] = useState([]);
   const [form, setForm] = useState({
-    classId: "",
+    courseId: "",
+    class_id: "",
     week: "",
     date: "",
-    actualStudents: "",
+    actual_students_present: "",
     topic: "",
-    learningOutcomes: "",
+    learning_outcomes: "",
     recommendations: "",
   });
 
   const fetchCourses = async () => {
-    const res = await api.get("/courses");
-    setCourses(res.data);
+    try {
+      const res = await api.get("/courses");
+      setCourses(res.data);
+    } catch (err) {
+      console.error("Failed to fetch courses", err);
+    }
   };
 
   const fetchClasses = async (courseId) => {
-    const res = await api.get(`/classes?course=${courseId}`);
-    setClasses(res.data);
+    try {
+      const res = await api.get(`/classes?course=${courseId}`);
+      setClasses(res.data);
+    } catch (err) {
+      console.error("Failed to fetch classes", err);
+    }
   };
 
   useEffect(() => {
     fetchCourses();
   }, []);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
 
   const handleCourseSelect = (courseId) => {
+    setForm({ ...form, courseId, class_id: "" });
     fetchClasses(courseId);
-    setForm({ ...form, classId: "" });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/reports", form);
+      const payload = {
+        class_id: form.class_id,
+        week: form.week,
+        date: form.date,
+        actual_students_present: form.actual_students_present,
+        topic: form.topic,
+        learning_outcomes: form.learning_outcomes,
+        recommendations: form.recommendations,
+      };
+      await api.post("/reports", payload);
       alert("Report submitted successfully!");
       setForm({
-        classId: "",
+        courseId: "",
+        class_id: "",
         week: "",
         date: "",
-        actualStudents: "",
+        actual_students_present: "",
         topic: "",
-        learningOutcomes: "",
+        learning_outcomes: "",
         recommendations: "",
       });
+      setClasses([]);
     } catch (err) {
       console.error(err);
       alert("Failed to submit report");
@@ -63,13 +92,16 @@ export default function SubmitReport() {
     <div className="bg-white p-6 rounded-lg shadow max-w-3xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">Submit Lecture Report</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Select onValueChange={handleCourseSelect}>
+        <Select
+          value={form.courseId}
+          onValueChange={(value) => handleCourseSelect(value)}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Select Course" />
           </SelectTrigger>
           <SelectContent>
             {courses.map((course) => (
-              <SelectItem key={course.id} value={course.id}>
+              <SelectItem key={course.id} value={String(course.id)}>
                 {course.name} ({course.code})
               </SelectItem>
             ))}
@@ -77,16 +109,17 @@ export default function SubmitReport() {
         </Select>
 
         <Select
-          onValueChange={(value) => setForm({ ...form, classId: value })}
-          value={form.classId}
+          value={form.class_id}
+          onValueChange={(value) => setForm({ ...form, class_id: value })}
+          disabled={!form.courseId}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select Class" />
           </SelectTrigger>
           <SelectContent>
             {classes.map((cls) => (
-              <SelectItem key={cls.id} value={cls.id}>
-                {cls.venue} - {cls.scheduledTime}
+              <SelectItem key={cls.id} value={String(cls.id)}>
+                {cls.class_name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -109,8 +142,8 @@ export default function SubmitReport() {
         <Input
           type="number"
           placeholder="Actual Number of Students Present"
-          name="actualStudents"
-          value={form.actualStudents}
+          name="actual_students_present"
+          value={form.actual_students_present}
           onChange={handleChange}
         />
         <Input
@@ -119,17 +152,22 @@ export default function SubmitReport() {
           value={form.topic}
           onChange={handleChange}
         />
-        <Input
+
+        <Textarea
           placeholder="Learning Outcomes"
-          name="learningOutcomes"
-          value={form.learningOutcomes}
+          name="learning_outcomes"
+          value={form.learning_outcomes}
           onChange={handleChange}
+          className="w-full"
+          rows={3}
         />
-        <Input
+        <Textarea
           placeholder="Lecturer Recommendations"
           name="recommendations"
           value={form.recommendations}
           onChange={handleChange}
+          className="w-full"
+          rows={3}
         />
 
         <Button type="submit" className="mt-4 w-full">

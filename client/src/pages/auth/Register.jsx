@@ -1,4 +1,3 @@
-// src/pages/Register.jsx
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,10 +13,13 @@ export default function Register() {
   });
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await api.post("/auth/register", form);
       alert("Account created successfully!");
@@ -25,6 +27,8 @@ export default function Register() {
     } catch (err) {
       console.error(err);
       alert("Failed to register");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,8 +79,12 @@ export default function Register() {
             <option value="prl">PRL</option>
             <option value="pl">PL</option>
           </select>
-          <Button type="submit" className="w-full">
-            Register
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={loading}
+          >
+            {loading ? "Signing in..." : "Sign In"}
           </Button>
         </form>
       </div>

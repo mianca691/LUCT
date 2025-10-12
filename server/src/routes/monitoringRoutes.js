@@ -5,7 +5,6 @@ import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// Protect the route — students must be logged in
 router.get("/", authMiddleware, getMonitoringData);
 
 export default router;

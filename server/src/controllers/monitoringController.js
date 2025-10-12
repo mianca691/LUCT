@@ -1,10 +1,5 @@
-// src/controllers/monitoringController.js
-import { pool } from "../config/db.js";
+import pool from "../config/db.js";
 
-/**
- * Get summary of student monitoring data.
- * Returns attendance percentages and lecture activity grouped by course.
- */
 export const getMonitoringData = async (req, res) => {
   try {
     const query = `
