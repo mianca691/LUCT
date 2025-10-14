@@ -10,10 +10,8 @@ import api from "@/services/api.js";
 export default function StudentRating() {
   const { token } = useAuth();
 
-  const [courses, setCourses] = useState([]);
   const [classes, setClasses] = useState([]);
   const [form, setForm] = useState({
-    courseId: "",
     classId: "",
     rating: "",
     comment: "",
@@ -21,36 +19,25 @@ export default function StudentRating() {
   const [myRatings, setMyRatings] = useState([]);
 
   useEffect(() => {
-    const fetchCourses = async () => {
+    const fetchEligibleClasses = async () => {
       try {
-        const res = await api.get("/courses", { headers: { Authorization: `Bearer ${token}` } });
-        setCourses(res.data);
-      } catch (err) {
-        console.error("Failed to fetch courses", err);
-      }
-    };
-    fetchCourses();
-  }, [token]);
-
-  useEffect(() => {
-    if (!form.courseId) return;
-    const fetchClasses = async () => {
-      try {
-        const res = await api.get(`/classes?course=${form.courseId}`, {
+        const res = await api.get("/ratings/available-classes", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setClasses(res.data);
       } catch (err) {
-        console.error("Failed to fetch classes", err);
+        console.error("Failed to fetch eligible classes", err);
       }
     };
-    fetchClasses();
-  }, [form.courseId, token]);
+    fetchEligibleClasses();
+  }, [token]);
 
   useEffect(() => {
     const fetchMyRatings = async () => {
       try {
-        const res = await api.get("/ratings/my", { headers: { Authorization: `Bearer ${token}` } });
+        const res = await api.get("/ratings/my", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setMyRatings(res.data);
       } catch (err) {
         console.error("Failed to fetch ratings", err);
@@ -76,14 +63,17 @@ export default function StudentRating() {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("Rating submitted successfully!");
-      setForm({ courseId: form.courseId, classId: "", rating: "", comment: "" });
 
-      const res = await api.get("/ratings/my", { headers: { Authorization: `Bearer ${token}` } });
+      alert("Rating submitted successfully!");
+      setForm({ classId: "", rating: "", comment: "" });
+
+      const res = await api.get("/ratings/my", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setMyRatings(res.data);
     } catch (err) {
       console.error(err);
-      alert("Failed to submit rating");
+      alert(err.response?.data?.message || "Failed to submit rating");
     }
   };
 
@@ -96,35 +86,22 @@ export default function StudentRating() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <Select
-              value={form.courseId}
-              onValueChange={(val) => setForm({ ...form, courseId: val, classId: "" })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Course" />
-              </SelectTrigger>
-              <SelectContent>
-                {courses.map((course) => (
-                  <SelectItem key={course.id} value={String(course.id)}>
-                    {course.name} ({course.code})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select
               value={form.classId}
               onValueChange={(val) => setForm({ ...form, classId: val })}
-              disabled={!form.courseId}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select Class" />
               </SelectTrigger>
               <SelectContent>
-                {classes.map((cls) => (
-                  <SelectItem key={cls.id} value={String(cls.id)}>
-                    {cls.class_name}
-                  </SelectItem>
-                ))}
+                {classes.length > 0 ? (
+                  classes.map((cls) => (
+                    <SelectItem key={cls.class_id} value={String(cls.class_id)}>
+                      {cls.course_name} - {cls.class_name} ({cls.course_code})
+                    </SelectItem>
+                  ))
+                ) : (
+                  <div className="p-2 text-gray-500 text-sm">No available classes to rate</div>
+                )}
               </SelectContent>
             </Select>
 
@@ -160,6 +137,7 @@ export default function StudentRating() {
           <table className="w-full border text-sm">
             <thead>
               <tr>
+                <th className="border p-2">Class</th>
                 <th className="border p-2">Course</th>
                 <th className="border p-2">Lecturer</th>
                 <th className="border p-2">Rating</th>
@@ -170,6 +148,7 @@ export default function StudentRating() {
             <tbody>
               {myRatings.map((r) => (
                 <tr key={r.id}>
+                  <td className="border p-2">{r.class_name}</td>
                   <td className="border p-2">{r.course_name}</td>
                   <td className="border p-2">{r.lecturer_name}</td>
                   <td className="border p-2">{r.rating}</td>

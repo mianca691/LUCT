@@ -69,9 +69,6 @@ export default function PRLRating() {
     <div className="p-8 space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Ratings & Feedback</h1>
-        <p className="text-gray-500">
-          View student ratings and feedback for all classes under your stream.
-        </p>
       </div>
 
       <Card className="shadow-sm">

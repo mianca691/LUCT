@@ -139,3 +139,69 @@ export const getLecturerReports = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch reports" });
   }
 };
+
+// ✅ Get all courses assigned to a lecturer
+export const getAssignedCourses = async (req, res) => {
+  try {
+    const lecturerId = req.user.id;
+    const query = `
+      SELECT DISTINCT c.*
+      FROM courses c
+      JOIN classes cl ON cl.course_id = c.id
+      WHERE cl.lecturer_id = $1
+    `;
+    const result = await pool.query(query, [lecturerId]);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching assigned courses:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// ✅ Get classes for a specific course taught by this lecturer
+export const getLecturerAssignedClasses = async (req, res) => {
+  try {
+    const lecturerId = req.user.id;
+
+    const result = await pool.query(
+      `
+      SELECT 
+        c.id,
+        c.class_name,
+        c.venue,
+        c.scheduled_time,
+        COUNT(se.id) AS total_students,
+        co.name AS course_name,
+        co.code AS course_code
+      FROM classes c
+      LEFT JOIN courses co ON co.id = c.course_id
+      LEFT JOIN student_enrolments se ON se.class_id = c.id
+      WHERE c.lecturer_id = $1
+      GROUP BY c.id, co.name, co.code
+      ORDER BY c.class_name;
+      `,
+      [lecturerId]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching lecturer classes:", err);
+    res.status(500).json({ message: "Failed to fetch classes" });
+  }
+};
+
+export const getLecturers = async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, name, email, role 
+       FROM users 
+       WHERE role = 'lecturer'
+       ORDER BY name`
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching lecturers:", err);
+    res.status(500).json({ error: "Failed to fetch lecturers" });
+  }
+};

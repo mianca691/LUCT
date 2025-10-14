@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "@/services/api.js";
+import { useAuth } from "@/contexts/AuthContext.jsx";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/select";
 
 export default function LectureReport() {
+  const { user } = useAuth();
   const [courses, setCourses] = useState([]);
   const [classes, setClasses] = useState([]);
   const [form, setForm] = useState({
@@ -27,16 +29,16 @@ export default function LectureReport() {
 
   const fetchCourses = async () => {
     try {
-      const res = await api.get("/courses");
+      const res = await api.get(`/lecturer/${user.id}/assigned-courses`);
       setCourses(res.data);
     } catch (err) {
-      console.error("Failed to fetch courses", err);
+      console.error("Failed to fetch lecturer courses", err);
     }
   };
 
   const fetchClasses = async (courseId) => {
     try {
-      const res = await api.get(`/classes?course=${courseId}`);
+      const res = await api.get(`/lecturer/${user.id}/classes?course=${courseId}`);
       setClasses(res.data);
     } catch (err) {
       console.error("Failed to fetch classes", err);
@@ -44,8 +46,8 @@ export default function LectureReport() {
   };
 
   useEffect(() => {
-    fetchCourses();
-  }, []);
+    if (user?.id) fetchCourses();
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,6 +61,14 @@ export default function LectureReport() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const selectedDate = new Date(form.date);
+    const today = new Date();
+    if (selectedDate > today) {
+      alert("You cannot select a future date.");
+      return;
+    }
+
     try {
       const payload = {
         class_id: form.class_id,
@@ -100,11 +110,15 @@ export default function LectureReport() {
             <SelectValue placeholder="Select Course" />
           </SelectTrigger>
           <SelectContent>
-            {courses.map((course) => (
-              <SelectItem key={course.id} value={String(course.id)}>
-                {course.name} ({course.code})
-              </SelectItem>
-            ))}
+            {courses.length > 0 ? (
+              courses.map((course) => (
+                <SelectItem key={course.id} value={String(course.id)}>
+                  {course.name} ({course.code})
+                </SelectItem>
+              ))
+            ) : (
+              <p className="px-3 py-1 text-gray-500">No assigned courses found</p>
+            )}
           </SelectContent>
         </Select>
 
@@ -117,11 +131,15 @@ export default function LectureReport() {
             <SelectValue placeholder="Select Class" />
           </SelectTrigger>
           <SelectContent>
-            {classes.map((cls) => (
-              <SelectItem key={cls.id} value={String(cls.id)}>
-                {cls.class_name}
-              </SelectItem>
-            ))}
+            {classes.length > 0 ? (
+              classes.map((cls) => (
+                <SelectItem key={cls.id} value={String(cls.id)}>
+                  {cls.class_name}
+                </SelectItem>
+              ))
+            ) : (
+              <p className="px-3 py-1 text-gray-500">No classes found</p>
+            )}
           </SelectContent>
         </Select>
 
@@ -132,13 +150,16 @@ export default function LectureReport() {
           value={form.week}
           onChange={handleChange}
         />
+
         <Input
           type="date"
           placeholder="Date of Lecture"
           name="date"
           value={form.date}
           onChange={handleChange}
+          max={new Date().toISOString().split("T")[0]}
         />
+
         <Input
           type="number"
           placeholder="Actual Number of Students Present"

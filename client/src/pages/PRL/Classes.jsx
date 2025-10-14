@@ -47,9 +47,6 @@ export default function PRLClasses() {
     <div className="p-8 space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Classes</h1>
-        <p className="text-gray-500">
-          View all classes under your program stream.
-        </p>
       </div>
 
       {classes.length === 0 ? (

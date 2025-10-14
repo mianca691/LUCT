@@ -9,7 +9,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { Home, BookOpen, Users, FileText, CheckSquare, Star, NotebookPen } from "lucide-react";
+import { Home, BookOpen, Users, FileText, CheckSquare, Star, NotebookPen, TrendingUp, BookOpenText } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext.jsx";
 import { Link, useLocation } from "react-router-dom";
 
@@ -20,16 +20,16 @@ export function AppSidebar() {
   const roleLinks = {
     lecturer: [
       { name: "Overview", path: "/lecturer/overview", icon: Home },
-      { name: "Classes", path: "/lecturer/classes", icon: BookOpen },
+      { name: "Classes", path: "/lecturer/classes", icon: BookOpenText },
       { name: "Reports", path: "/lecturer/reports", icon: FileText },
       { name: "Submit Report", path: "/lecturer/submit-report", icon: CheckSquare },
     ],
     pl: [
       { name: "Dashboard", path: "/dashboard", icon: Home },
       { name: "Courses", path: "/pl/courses", icon: BookOpen },
-      { name: "Classes", path: "/pl/classes", icon: Users },
+      { name: "Classes", path: "/pl/classes", icon: BookOpenText },
       { name: "Lectures", path: "/pl/lectures", icon: NotebookPen },
-      { name: "Monitoring", path: "/pl/monitoring", icon: CheckSquare },
+      { name: "Monitoring", path: "/pl/monitoring", icon: TrendingUp },
       { name: "Reports", path: "/pl/reports", icon: FileText },
       { name: "Rating", path: "/pl/rating", icon: Star },
     ],
@@ -38,13 +38,13 @@ export function AppSidebar() {
       { name: "Reports", path: "/prl/reports", icon: FileText },
       { name: "Courses", path: "/prl/courses", icon: BookOpen },
       { name: "Monitoring", path: "/prl/monitoring", icon: Users },
-      { name: "Rating", path: "/prl/rating", icon: CheckSquare },
-      { name: "Classes", path: "/prl/classes", icon: BookOpen },
+      { name: "Rating", path: "/prl/rating", icon: Star },
+      { name: "Classes", path: "/prl/classes", icon: BookOpenText },
     ],
     student: [
       { name: "Dashboard", path: "/dashboard", icon: Home },
-      { name: "Monitor", path: "/student/monitor", icon: BookOpen },
-      { name: "Rating", path: "/student/rating", icon: FileText },
+      { name: "Monitoring", path: "/student/monitor", icon: TrendingUp },
+      { name: "Rating", path: "/student/rating", icon: Star },
       { name: "Enrollments", path: "/student/enrollments", icon: Users },
       { name: "Attendance", path: "/student/attendance", icon: CheckSquare },
     ],

@@ -50,9 +50,6 @@ export default function PRLCourses() {
     <div className="p-8 space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Courses</h1>
-        <p className="text-gray-500">
-          View all courses and associated classes under your stream.
-        </p>
       </div>
 
       {courses.length === 0 ? (
@@ -89,7 +86,7 @@ export default function PRLCourses() {
                           <TableCell>{cls.lecturer_name}</TableCell>
                           <TableCell>
                             {cls.scheduled_time
-                              ? format(new Date(cls.scheduled_time), "dd MMM yyyy, HH:mm")
+                              ? format(new Date(cls.scheduled_time), "HH:mm")
                               : "-"}
                           </TableCell>
                           <TableCell>{cls.venue || "-"}</TableCell>

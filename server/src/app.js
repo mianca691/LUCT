@@ -11,6 +11,7 @@ import ratingRoutes from "./routes/ratingRoutes.js";
 import monitoringRoutes from "./routes/monitoringRoutes.js";
 import lecturerRoutes from "./routes/lecturerRoutes.js";
 import prlRoutes from "./routes/prlRoutes.js";
+import plRoutes from "./routes/plRoutes.js";
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ app.use("/ratings", ratingRoutes);
 app.use("/monitoring", monitoringRoutes); 
 app.use("/lecturer", lecturerRoutes);
 app.use("/prl", prlRoutes);
+app.use("/pl", plRoutes);
 
 
 app.get("/ping", (req, res) => res.json({ message: "pong" }));

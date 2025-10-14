@@ -90,9 +90,6 @@ export default function PRLReports() {
     <div className="p-8 space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Lecturer Reports</h1>
-        <p className="text-gray-500">
-          View all lecturer reports under your stream and provide feedback.
-        </p>
       </div>
 
       {reports.length === 0 ? (

@@ -4,13 +4,14 @@ import api from "@/services/api.js";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate, Link} from "react-router-dom";
 
 export default function Classes() {
   const { token } = useAuth();
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const fetchClasses = async () => {
     setLoading(true);
@@ -31,6 +32,10 @@ export default function Classes() {
   useEffect(() => {
     fetchClasses();
   }, [token]);
+
+  const handleSubmitReport = (classId) => {
+    navigate(`/lecturer/report?class=${classId}`);
+  };
 
   if (loading) {
     return (
@@ -64,43 +69,52 @@ export default function Classes() {
         </Card>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {classes.map((cls) => (
-            <Card
-              key={cls.id}
-              className="shadow-sm border hover:shadow-md transition"
-            >
-              <CardHeader>
-                <CardTitle>{cls.class_name}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm">
-                <p>
-                  <span className="font-medium">Course:</span>{" "}
-                  {cls.course_name} ({cls.course_code})
-                </p>
-                <p>
-                  <span className="font-medium">Venue:</span> {cls.venue}
-                </p>
-                <p>
-                  <span className="font-medium">Schedule:</span>{" "}
-                  {cls.scheduled_time
-                    ? new Date(cls.scheduled_time).toLocaleString()
-                    : "Not scheduled"}
-                </p>
-                <p>
-                  <span className="font-medium">Total Students:</span>{" "}
-                  {cls.total_students}
-                </p>
+          {classes.map((cls) => {
+            const timeOnly = cls.scheduled_time
+              ? new Date(cls.scheduled_time).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : "Not scheduled";
 
-                <div className="pt-3">
-                  <Link to={`/lecturer/report?class=${cls.id}`}>
-                    <Button className="w-full" size="sm">
-                      Submit Report
+            return (
+              <Card
+                key={cls.id}
+                className="shadow-sm border hover:shadow-md transition"
+              >
+                <CardHeader>
+                  <CardTitle>{cls.class_name}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2 text-sm">
+                  <p>
+                    <span className="font-medium">Course:</span>{" "}
+                    {cls.course_name} ({cls.course_code})
+                  </p>
+                  <p>
+                    <span className="font-medium">Venue:</span> {cls.venue}
+                  </p>
+                  <p>
+                    <span className="font-medium">Schedule:</span> {timeOnly}
+                  </p>
+                  <p>
+                    <span className="font-medium">Total Students:</span>{" "}
+                    {cls.total_students}
+                  </p>
+
+                  <div className="pt-3">
+                    <Button
+                      className="w-full"
+                      size="sm"
+                    >
+                      <Link to={`/lecturer/submit-report`}>
+                        Submit Report
+                      </Link>
                     </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>
