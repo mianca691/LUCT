@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext.jsx";
 import api from "@/services/api.js";
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { useNavigate, Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Classes() {
   const { token } = useAuth();
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const fetchClasses = async () => {
     setLoading(true);
@@ -32,10 +31,6 @@ export default function Classes() {
   useEffect(() => {
     fetchClasses();
   }, [token]);
-
-  const handleSubmitReport = (classId) => {
-    navigate(`/lecturer/report?class=${classId}`);
-  };
 
   if (loading) {
     return (
@@ -68,54 +63,61 @@ export default function Classes() {
           No classes assigned yet.
         </Card>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {classes.map((cls) => {
-            const timeOnly = cls.scheduled_time
-              ? new Date(cls.scheduled_time).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-              : "Not scheduled";
+        <Card className="overflow-x-auto shadow-sm border">
+          <table className="w-full text-sm text-left border-collapse">
+            <thead className="bg-gray-100 text-gray-700 text-sm uppercase">
+              <tr>
+                <th className="p-3">Class Name</th>
+                <th className="p-3">Course</th>
+                <th className="p-3">Venue</th>
+                <th className="p-3">Schedule</th>
+                <th className="p-3 text-center">Students</th>
+                <th className="p-3 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {classes.map((cls, idx) => {
+                const timeOnly = cls.scheduled_time
+                  ? new Date(cls.scheduled_time).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : "Not scheduled";
 
-            return (
-              <Card
-                key={cls.id}
-                className="shadow-sm border hover:shadow-md transition"
-              >
-                <CardHeader>
-                  <CardTitle>{cls.class_name}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2 text-sm">
-                  <p>
-                    <span className="font-medium">Course:</span>{" "}
-                    {cls.course_name} ({cls.course_code})
-                  </p>
-                  <p>
-                    <span className="font-medium">Venue:</span> {cls.venue}
-                  </p>
-                  <p>
-                    <span className="font-medium">Schedule:</span> {timeOnly}
-                  </p>
-                  <p>
-                    <span className="font-medium">Total Students:</span>{" "}
-                    {cls.total_students}
-                  </p>
-
-                  <div className="pt-3">
-                    <Button
-                      className="w-full"
-                      size="sm"
-                    >
-                      <Link to={`/lecturer/submit-report`}>
-                        Submit Report
-                      </Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+                return (
+                  <tr
+                    key={cls.id}
+                    className={`border-t hover:bg-gray-50 transition ${
+                      idx % 2 === 0 ? "bg-white" : "bg-gray-50/50"
+                    }`}
+                  >
+                    <td className="p-3 font-medium text-gray-900">
+                      {cls.class_name}
+                    </td>
+                    <td className="p-3">
+                      {cls.course_name} ({cls.course_code})
+                    </td>
+                    <td className="p-3">{cls.venue}</td>
+                    <td className="p-3">{timeOnly}</td>
+                    <td className="p-3 text-center">
+                      {cls.total_students ?? 0}
+                    </td>
+                    <td className="p-3 text-center">
+                      <Button
+                        className="w-full"
+                        size="sm"
+                      >
+                        <Link to={`/lecturer/submit-report`}>
+                          Submit Report
+                        </Link>
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </Card>
       )}
     </div>
   );

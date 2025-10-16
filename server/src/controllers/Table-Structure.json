@@ -1,0 +1,344 @@
+[{
+  "table_name": "classes",
+  "column_name": "id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": "nextval('classes_id_seq'::regclass)",
+  "is_nullable": "NO"
+}, {
+  "table_name": "classes",
+  "column_name": "course_id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "classes",
+  "column_name": "lecturer_id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "classes",
+  "column_name": "scheduled_time",
+  "data_type": "time without time zone",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "classes",
+  "column_name": "venue",
+  "data_type": "character varying",
+  "character_maximum_length": 100,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "classes",
+  "column_name": "total_registered_students",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": "0",
+  "is_nullable": "YES"
+}, {
+  "table_name": "classes",
+  "column_name": "class_name",
+  "data_type": "character varying",
+  "character_maximum_length": 50,
+  "column_default": null,
+  "is_nullable": "NO"
+}, {
+  "table_name": "courses",
+  "column_name": "id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": "nextval('courses_id_seq'::regclass)",
+  "is_nullable": "NO"
+}, {
+  "table_name": "courses",
+  "column_name": "faculty_id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "courses",
+  "column_name": "name",
+  "data_type": "character varying",
+  "character_maximum_length": 100,
+  "column_default": null,
+  "is_nullable": "NO"
+}, {
+  "table_name": "courses",
+  "column_name": "code",
+  "data_type": "character varying",
+  "character_maximum_length": 50,
+  "column_default": null,
+  "is_nullable": "NO"
+}, {
+  "table_name": "faculties",
+  "column_name": "id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": "nextval('faculties_id_seq'::regclass)",
+  "is_nullable": "NO"
+}, {
+  "table_name": "faculties",
+  "column_name": "name",
+  "data_type": "character varying",
+  "character_maximum_length": 100,
+  "column_default": null,
+  "is_nullable": "NO"
+}, {
+  "table_name": "feedback",
+  "column_name": "id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": "nextval('feedback_id_seq'::regclass)",
+  "is_nullable": "NO"
+}, {
+  "table_name": "feedback",
+  "column_name": "report_id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "feedback",
+  "column_name": "prl_id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "feedback",
+  "column_name": "comment",
+  "data_type": "text",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "feedback",
+  "column_name": "created_at",
+  "data_type": "timestamp without time zone",
+  "character_maximum_length": null,
+  "column_default": "CURRENT_TIMESTAMP",
+  "is_nullable": "YES"
+}, {
+  "table_name": "lecture_reports",
+  "column_name": "id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": "nextval('lecture_reports_id_seq'::regclass)",
+  "is_nullable": "NO"
+}, {
+  "table_name": "lecture_reports",
+  "column_name": "class_id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "lecture_reports",
+  "column_name": "week",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "lecture_reports",
+  "column_name": "date",
+  "data_type": "date",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "NO"
+}, {
+  "table_name": "lecture_reports",
+  "column_name": "actual_students_present",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "lecture_reports",
+  "column_name": "topic",
+  "data_type": "text",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "lecture_reports",
+  "column_name": "learning_outcomes",
+  "data_type": "text",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "lecture_reports",
+  "column_name": "recommendations",
+  "data_type": "text",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "lecture_reports",
+  "column_name": "submitted_by",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "lecture_reports",
+  "column_name": "created_at",
+  "data_type": "timestamp without time zone",
+  "character_maximum_length": null,
+  "column_default": "CURRENT_TIMESTAMP",
+  "is_nullable": "YES"
+}, {
+  "table_name": "ratings",
+  "column_name": "id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": "nextval('ratings_id_seq'::regclass)",
+  "is_nullable": "NO"
+}, {
+  "table_name": "ratings",
+  "column_name": "class_id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "ratings",
+  "column_name": "user_id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "ratings",
+  "column_name": "rating",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "ratings",
+  "column_name": "comment",
+  "data_type": "text",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "ratings",
+  "column_name": "created_at",
+  "data_type": "timestamp without time zone",
+  "character_maximum_length": null,
+  "column_default": "CURRENT_TIMESTAMP",
+  "is_nullable": "YES"
+}, {
+  "table_name": "student_attendance",
+  "column_name": "id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": "nextval('student_attendance_id_seq'::regclass)",
+  "is_nullable": "NO"
+}, {
+  "table_name": "student_attendance",
+  "column_name": "report_id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "NO"
+}, {
+  "table_name": "student_attendance",
+  "column_name": "student_id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "NO"
+}, {
+  "table_name": "student_attendance",
+  "column_name": "status",
+  "data_type": "character varying",
+  "character_maximum_length": 10,
+  "column_default": null,
+  "is_nullable": "NO"
+}, {
+  "table_name": "student_attendance",
+  "column_name": "created_at",
+  "data_type": "timestamp without time zone",
+  "character_maximum_length": null,
+  "column_default": "CURRENT_TIMESTAMP",
+  "is_nullable": "YES"
+}, {
+  "table_name": "student_enrolments",
+  "column_name": "id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": "nextval('student_enrolments_id_seq'::regclass)",
+  "is_nullable": "NO"
+}, {
+  "table_name": "student_enrolments",
+  "column_name": "student_id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "NO"
+}, {
+  "table_name": "student_enrolments",
+  "column_name": "class_id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": null,
+  "is_nullable": "NO"
+}, {
+  "table_name": "student_enrolments",
+  "column_name": "created_at",
+  "data_type": "timestamp without time zone",
+  "character_maximum_length": null,
+  "column_default": "CURRENT_TIMESTAMP",
+  "is_nullable": "YES"
+}, {
+  "table_name": "users",
+  "column_name": "id",
+  "data_type": "integer",
+  "character_maximum_length": null,
+  "column_default": "nextval('users_id_seq'::regclass)",
+  "is_nullable": "NO"
+}, {
+  "table_name": "users",
+  "column_name": "name",
+  "data_type": "character varying",
+  "character_maximum_length": 100,
+  "column_default": null,
+  "is_nullable": "NO"
+}, {
+  "table_name": "users",
+  "column_name": "email",
+  "data_type": "character varying",
+  "character_maximum_length": 100,
+  "column_default": null,
+  "is_nullable": "NO"
+}, {
+  "table_name": "users",
+  "column_name": "password_hash",
+  "data_type": "character varying",
+  "character_maximum_length": 255,
+  "column_default": null,
+  "is_nullable": "NO"
+}, {
+  "table_name": "users",
+  "column_name": "role",
+  "data_type": "character varying",
+  "character_maximum_length": 20,
+  "column_default": null,
+  "is_nullable": "YES"
+}, {
+  "table_name": "users",
+  "column_name": "created_at",
+  "data_type": "timestamp without time zone",
+  "character_maximum_length": null,
+  "column_default": "CURRENT_TIMESTAMP",
+  "is_nullable": "YES"
+}]
