@@ -51,7 +51,6 @@ git clone https://github.com/Whizz75/luct-reporting-app.git
 cd luct-reporting-app
 2️⃣ Backend Setup
 bash
-Copy code
 cd server
 npm install
 Create a .env file inside the /server directory:
@@ -116,11 +115,8 @@ npm run test
 Uses Jest and Supertest for route and model testing.
 
 🚀 Deployment
-The app supports containerized or cloud deployment.
+The app supports cloud deployment.
 
-🐳 Using Docker
-
-docker-compose up --build
 ☁️ Using CI/CD ( Render )
 Push to the main branch → triggers auto-build and deployment.
 
@@ -130,8 +126,8 @@ Ensure environment variables are set in the hosting dashboard.
 Role	Description
 Student	Views enrolled classes and submission status
 Lecturer	Submits reports for assigned classes
-PRL (Program Leader)	Monitors lecturer submissions and performance
-PL (Programme Leader)	Reviews and finalizes reports across programs
+PRL (Principal Lecturer)	Monitors lecturer submissions and performance
+PL (Program Leader)	Reviews and finalizes reports across programs
 
 🧭 Roadmap
  Add analytics dashboard for PRL/PL
@@ -154,8 +150,8 @@ Push to the branch: git push origin feature/awesome-feature
 Create a Pull Request
 
 🧑‍💻 Authors
-Developed by LUCT Tech Team
-Faculty of Computing & Technology
+Developed by **Phoka Harry Ntsekhe**
+Faculty of Information Communication Technology
 Limkokwing University of Creative Technology
 
 🪪 License
