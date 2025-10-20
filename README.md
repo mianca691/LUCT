@@ -42,46 +42,6 @@ It provides a secure, modular, and user-friendly platform for lecturers and admi
 
 ---
 
-## 📂 Folder Structure
-
-LUCT/
-├── client/                # React frontend (Vite)
-│   ├──public/               
-│   ├──tests/
-│   ├── src/
-│   │   ├── pages/         # Page-level components by role
-│   │   ├── components/    # Reusable UI components
-│   │   ├── contexts/      # Auth & global state providers
-│   │   ├── services/      # API integration layer
-│   │   ├── hooks/         # App hook logic
-│   │   ├── lib/           # Lib utilities
-│   │   └── App.jsx        # Root React component
-│   ├──.gitignore
-│   ├──components.json
-│   ├──eslint.config.js
-│   ├──index.html
-│   ├──package.json
-│   ├──README.md
-│   └── vite.config.js
-│
-├── server/                # Express backend
-│   ├── tests/
-│   ├── src/
-│   │   ├── controllers/   # Route logic
-│   │   ├── routes/        # Express routes
-│   │   ├── middleware/    # Auth & validation
-│   │   ├── config/        # Database and env setup
-│   │   └── app.js      # Server entry point  
-│   ├── .gitignore
-│   ├── nodemon.json          
-│   └── package.json
-│
-├── .env.example           # Sample environment variables
-├── LICENSE
-└── README.md
-
----
-
 ## ⚙️ Setup & Installation
 
 ### 1️⃣ Clone the Repository

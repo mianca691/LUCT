@@ -1,4 +1,3 @@
-// src/routes/monitoringRoutes.js
 import express from "express";
 import { getMonitoringData } from "../controllers/monitoringController.js";
 import authMiddleware from "../middlewares/authMiddleware.js";

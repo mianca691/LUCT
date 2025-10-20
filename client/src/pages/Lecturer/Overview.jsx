@@ -58,13 +58,11 @@ export default function LecturerOverview() {
 
   return (
     <div className="p-8 space-y-8">
-      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Lecturer Overview</h1>
         <p className="text-gray-500">A quick summary of your teaching activity.</p>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <Card className="shadow-sm">
           <CardHeader>
@@ -94,7 +92,6 @@ export default function LecturerOverview() {
         </Card>
       </div>
 
-      {/* Recent Reports */}
       <Card className="shadow-sm">
         <CardHeader>
           <CardTitle>Recent Reports</CardTitle>

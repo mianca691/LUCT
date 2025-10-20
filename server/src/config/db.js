@@ -5,7 +5,6 @@ dotenv.config();
 
 const { Pool } = pg;
 
-// Create a shared connection pool
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl:
@@ -17,7 +16,6 @@ export const pool = new Pool({
   connectionTimeoutMillis: 10000,
 });
 
-// Simple connection test on startup
 pool
   .connect()
   .then((client) => {
@@ -28,10 +26,8 @@ pool
     console.error("❌ DB connection error:", err.message);
   });
 
-// Handle idle disconnections gracefully
 pool.on("error", (err) => {
   console.error("⚠️ Unexpected DB error, retrying:", err.message);
-  // optional: reinitialize pool or reconnect logic here
 });
 
 export default pool;

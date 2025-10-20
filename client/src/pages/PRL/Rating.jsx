@@ -18,7 +18,7 @@ import api from "@/services/api.js";
 
 function renderStars(rating) {
   const stars = [];
-  const rounded = Math.round(rating); // ensure average ratings render as whole stars
+  const rounded = Math.round(rating);
   for (let i = 1; i <= 5; i++) {
     stars.push(
       i <= rounded ? (
@@ -45,7 +45,6 @@ export default function PRLRating() {
       const res = await api.get("/prl/rating");
       const data = res.data;
 
-      // Group by class_id
       const grouped = data.reduce((acc, r) => {
         if (!acc[r.class_id]) {
           acc[r.class_id] = {
@@ -137,7 +136,6 @@ export default function PRLRating() {
 
                 return (
                   <React.Fragment key={group.class_id}>
-                    {/* Collapsed Summary Row */}
                     <TableRow
                       className="cursor-pointer hover:bg-gray-50 transition"
                       onClick={() => toggleExpand(group.class_id)}
@@ -158,8 +156,6 @@ export default function PRLRating() {
                       <TableCell>{group.lecturer_name || "-"}</TableCell>
                       <TableCell>{renderStars(avgRating)}</TableCell>
                     </TableRow>
-
-                    {/* Expanded Ratings List */}
                     {expanded[group.class_id] && (
                       <>
                         <TableRow className="bg-gray-100 text-gray-700 text-sm">

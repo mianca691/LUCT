@@ -28,7 +28,7 @@ export function AppSidebar() {
       { name: "Dashboard", path: "/dashboard", icon: Home },
       { name: "Courses", path: "/pl/courses", icon: BookOpen },
       { name: "Classes", path: "/pl/classes", icon: BookOpenText },
-      { name: "Lectures", path: "/pl/lectures", icon: NotebookPen },
+      { name: "Lecturers", path: "/pl/lectures", icon: Users },
       { name: "Monitoring", path: "/pl/monitoring", icon: TrendingUp },
       { name: "Reports", path: "/pl/reports", icon: FileText },
       { name: "Rating", path: "/pl/rating", icon: Star },

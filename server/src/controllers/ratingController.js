@@ -1,6 +1,5 @@
 import { pool } from "../config/db.js";
 
-// ✅ Get only classes that the logged-in student is enrolled in AND have a report
 export const getAvailableClasses = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -32,7 +31,6 @@ export const getAvailableClasses = async (req, res) => {
   }
 };
 
-// ✅ Create rating, but validate that the student is enrolled and class has a report
 export const createRating = async (req, res) => {
   const { class_id, rating, comment } = req.body;
   const userId = req.user.id;
@@ -41,7 +39,6 @@ export const createRating = async (req, res) => {
     return res.status(400).json({ message: "Class and rating are required." });
 
   try {
-    // Verify that student is enrolled in the class and class has a report
     const validation = await pool.query(`
       SELECT 1
       FROM student_enrolments se
@@ -58,7 +55,6 @@ export const createRating = async (req, res) => {
       });
     }
 
-    // Insert rating
     const result = await pool.query(
       `
       INSERT INTO ratings (class_id, user_id, rating, comment)
@@ -75,7 +71,6 @@ export const createRating = async (req, res) => {
   }
 };
 
-// ✅ Get logged-in student's ratings
 export const getMyRatings = async (req, res) => {
   try {
     const userId = req.user.id;

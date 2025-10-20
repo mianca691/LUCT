@@ -140,7 +140,6 @@ export const getLecturerReports = async (req, res) => {
   }
 };
 
-// ✅ Get all courses assigned to a lecturer
 export const getAssignedCourses = async (req, res) => {
   try {
     const lecturerId = req.user.id;
@@ -158,7 +157,6 @@ export const getAssignedCourses = async (req, res) => {
   }
 };
 
-// ✅ Get classes for a specific course taught by this lecturer
 export const getLecturerAssignedClasses = async (req, res) => {
   try {
     const lecturerId = req.user.id;

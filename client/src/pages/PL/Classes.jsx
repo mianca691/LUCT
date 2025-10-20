@@ -21,15 +21,12 @@ export default function Classes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Dialog states
   const [openCreate, setOpenCreate] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
 
-  // Form states
   const [newClass, setNewClass] = useState({ class_name: "", course_id: "", scheduled_time: "", venue: "" });
   const [editClass, setEditClass] = useState({ id: null, class_name: "", course_id: "", scheduled_time: "", venue: "", lecturer_id: null });
 
-  // --- Fetch classes, courses, lecturers ---
   const fetchClasses = async () => {
     setLoading(true);
     setError("");
@@ -68,7 +65,6 @@ export default function Classes() {
     fetchLecturers();
   }, []);
 
-  // --- Handlers ---
   const handleCreateClass = async () => {
     if (!newClass.class_name || !newClass.course_id) {
       alert("Class name and course are required");
@@ -111,7 +107,6 @@ export default function Classes() {
     }
   };
 
-  // --- Render ---
   if (loading)
     return (
       <div className="flex justify-center items-center h-64">
@@ -189,7 +184,6 @@ export default function Classes() {
         </div>
       )}
 
-      {/* --- Create Class Dialog --- */}
       <Dialog open={openCreate} onOpenChange={setOpenCreate}>
         <DialogContent>
           <DialogHeader>
@@ -233,7 +227,6 @@ export default function Classes() {
         </DialogContent>
       </Dialog>
 
-      {/* --- Edit Class Dialog --- */}
       <Dialog open={openEdit} onOpenChange={setOpenEdit}>
         <DialogContent>
           <DialogHeader>

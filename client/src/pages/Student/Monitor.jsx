@@ -69,7 +69,6 @@ export default function Monitor() {
         </CardContent>
       </Card>
 
-      {/* Attendance Summary */}
       <Card className="shadow-sm">
         <CardHeader>
           <CardTitle>Attendance Summary</CardTitle>
@@ -87,7 +86,6 @@ export default function Monitor() {
         </CardContent>
       </Card>
 
-      {/* Lecture Details */}
       <Card className="shadow-sm">
         <CardHeader>
           <CardTitle>Lecture Details</CardTitle>

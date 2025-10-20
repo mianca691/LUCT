@@ -32,6 +32,12 @@ export default function Classes() {
     fetchClasses();
   }, [token]);
 
+  const formatTime = (timeStr) => {
+    if (!timeStr) return "Not scheduled";
+    const [hours, minutes] = timeStr.split(":");
+    return `${hours}:${minutes}`;
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -76,45 +82,31 @@ export default function Classes() {
               </tr>
             </thead>
             <tbody>
-              {classes.map((cls, idx) => {
-                const timeOnly = cls.scheduled_time
-                  ? new Date(cls.scheduled_time).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
-                  : "Not scheduled";
-
-                return (
-                  <tr
-                    key={cls.id}
-                    className={`border-t hover:bg-gray-50 transition ${
-                      idx % 2 === 0 ? "bg-white" : "bg-gray-50/50"
-                    }`}
-                  >
-                    <td className="p-3 font-medium text-gray-900">
-                      {cls.class_name}
-                    </td>
-                    <td className="p-3">
-                      {cls.course_name} ({cls.course_code})
-                    </td>
-                    <td className="p-3">{cls.venue}</td>
-                    <td className="p-3">{timeOnly}</td>
-                    <td className="p-3 text-center">
-                      {cls.total_students ?? 0}
-                    </td>
-                    <td className="p-3 text-center">
-                      <Button
-                        className="w-full"
-                        size="sm"
-                      >
-                        <Link to={`/lecturer/submit-report`}>
-                          Submit Report
-                        </Link>
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
+              {classes.map((cls, idx) => (
+                <tr
+                  key={cls.id}
+                  className={`border-t hover:bg-gray-50 transition ${
+                    idx % 2 === 0 ? "bg-white" : "bg-gray-50/50"
+                  }`}
+                >
+                  <td className="p-3 font-medium text-gray-900">
+                    {cls.class_name}
+                  </td>
+                  <td className="p-3">
+                    {cls.course_name} ({cls.course_code})
+                  </td>
+                  <td className="p-3">{cls.venue || "-"}</td>
+                  <td className="p-3">{formatTime(cls.scheduled_time)}</td>
+                  <td className="p-3 text-center">
+                    {cls.total_students ?? 0}
+                  </td>
+                  <td className="p-3 text-center">
+                    <Button className="w-full" size="sm">
+                      <Link to={`/lecturer/submit-report`}>Submit Report</Link>
+                    </Button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </Card>

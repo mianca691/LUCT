@@ -4,7 +4,6 @@ import { Table, TableHeader, TableBody, TableRow, TableCell } from "@/components
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import api from "@/services/api.js";
-import { format } from "date-fns";
 
 export default function PRLCourses() {
   const [courses, setCourses] = useState([]);
@@ -28,6 +27,12 @@ export default function PRLCourses() {
   useEffect(() => {
     fetchCourses();
   }, []);
+
+  const formatTime = (timeStr) => {
+    if (!timeStr) return "-";
+    const [hours, minutes] = timeStr.split(":");
+    return `${hours}:${minutes}`;
+  };
 
   if (loading) {
     return (
@@ -84,11 +89,7 @@ export default function PRLCourses() {
                         <TableRow key={cls.id}>
                           <TableCell>{cls.class_name}</TableCell>
                           <TableCell>{cls.lecturer_name}</TableCell>
-                          <TableCell>
-                            {cls.scheduled_time
-                              ? format(new Date(cls.scheduled_time), "HH:mm")
-                              : "-"}
-                          </TableCell>
+                          <TableCell>{formatTime(cls.scheduled_time)}</TableCell>
                           <TableCell>{cls.venue || "-"}</TableCell>
                           <TableCell>{cls.total_registered_students}</TableCell>
                         </TableRow>

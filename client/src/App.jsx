@@ -22,7 +22,7 @@ import PRLRating from "@/pages/PRL/Rating.jsx";
 import PRLClasses from "@/pages/PRL/Classes.jsx";
 
 // PL Pages
-import Courses from "@/pages/PL/Courses.jsx";
+import PLCourses from "@/pages/PL/Courses.jsx";
 import ClassesPL from "@/pages/PL/Classes.jsx";
 import Lectures from "@/pages/PL/Lectures.jsx";
 import Monitoring from "@/pages/PL/Monitoring.jsx";
@@ -91,7 +91,7 @@ export default function App() {
 
       <Route element={<ProtectedRoute roles={["pl"]} />}>
         <Route element={<DashboardLayout />}>
-          <Route path="/pl/courses" element={<Courses />} />
+          <Route path="/pl/courses" element={<PLCourses />} />
           <Route path="/pl/classes" element={<ClassesPL />} />
           <Route path="/pl/lectures" element={<Lectures />} />
           <Route path="/pl/monitoring" element={<Monitoring />} />
