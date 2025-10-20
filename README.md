@@ -96,6 +96,8 @@ npm run dev	Start development server (nodemon)
 npm start	Run production server
 npm test	Run Jest test suite
 
+---
+
 🧱 Architecture Overview
 The app follows a modular PERN architecture:
 
