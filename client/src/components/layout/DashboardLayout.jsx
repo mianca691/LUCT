@@ -22,9 +22,16 @@ export default function DashboardLayout() {
   return (
     <SidebarProvider>
       <AppSidebar />
+
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-white">
-          <SidebarTrigger className="-ml-1" />
+        <header className="flex h-16 shrink-0 items-center gap-3 
+                           border-b px-4 
+                           bg-card text-card-foreground
+                           dark:bg-card dark:text-card-foreground
+                           backdrop-blur">
+          
+          <SidebarTrigger className="-ml-1 text-foreground" />
+
           <Separator
             orientation="vertical"
             className="mr-2 data-[orientation=vertical]:h-4"
@@ -33,11 +40,15 @@ export default function DashboardLayout() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+                <BreadcrumbLink href="/dashboard" className="text-muted-foreground hover:text-primary">
+                  Dashboard
+                </BreadcrumbLink>
               </BreadcrumbItem>
+
               <BreadcrumbSeparator className="hidden md:block" />
+
               <BreadcrumbItem>
-                <BreadcrumbPage>
+                <BreadcrumbPage className="font-semibold text-primary">
                   {user?.role?.toUpperCase() ?? "USER"}
                 </BreadcrumbPage>
               </BreadcrumbItem>
@@ -45,19 +56,25 @@ export default function DashboardLayout() {
           </Breadcrumb>
 
           <div className="ml-auto flex items-center gap-4">
-            <span className="font-medium text-gray-700 hidden sm:block">
+            <span className="font-medium text-muted-foreground hidden sm:block">
               {user?.name ?? "Guest"}
             </span>
+
             <button
               onClick={logout}
-              className="rounded-md border px-3 py-1 text-sm hover:bg-gray-100 transition"
+              className="rounded-md border border-border px-3 py-1 text-sm
+                         hover:bg-secondary hover:text-secondary-foreground
+                         transition"
             >
               Logout
             </button>
           </div>
         </header>
-        
-        <main className="flex flex-1 flex-col gap-4 p-4 bg-gray-50 overflow-y-auto">
+
+        <main className="flex flex-1 flex-col gap-4 p-4 
+                         bg-background text-foreground 
+                         dark:bg-background dark:text-foreground
+                         overflow-y-auto">
           <Outlet />
         </main>
       </SidebarInset>

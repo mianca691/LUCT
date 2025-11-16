@@ -34,7 +34,7 @@ export default function Reports() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
       </div>
     );
   }
@@ -42,33 +42,44 @@ export default function Reports() {
   if (error) {
     return (
       <div className="p-8 text-center">
-        <p className="text-red-500 mb-4">{error}</p>
+        <p className="text-destructive mb-4">{error}</p>
         <Button onClick={fetchReports}>Retry</Button>
       </div>
     );
   }
 
+  const getAttendanceColor = (percentage) => {
+    if (percentage === null || percentage === undefined) return "text-muted-foreground";
+    if (percentage >= 90) return "text-emerald-500 font-semibold";
+    if (percentage >= 60) return "text-yellow-500 font-semibold";
+    return "text-destructive font-semibold";
+  };
+
   return (
     <div className="p-8 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Your Submitted Reports</h1>
-        <p className="text-gray-500">View all the reports you've submitted.</p>
+      {/* Header */}
+      <div className="space-y-1">
+        <h1 className="text-2xl font-bold text-foreground">Your Submitted Reports</h1>
+        <p className="text-muted-foreground">
+          View all the reports you've submitted.
+        </p>
       </div>
 
+      {/* Empty State */}
       {reports.length === 0 ? (
-        <Card className="max-w-2xl mx-auto p-6 text-center text-gray-500">
+        <Card className="max-w-2xl mx-auto p-6 text-center text-muted-foreground">
           No reports submitted yet.
         </Card>
       ) : (
-        <Card className="shadow-sm">
+        <Card className="shadow-sm border border-border rounded-xl">
           <CardHeader>
             <CardTitle>Report History</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border">
-                <thead>
-                  <tr className="bg-gray-50 text-left">
+              <table className="w-full text-sm border-collapse">
+                <thead className="bg-card-foreground/10 text-muted-foreground text-sm uppercase sticky top-0 z-10">
+                  <tr>
                     <th className="p-2 border">Date</th>
                     <th className="p-2 border">Class</th>
                     <th className="p-2 border">Course</th>
@@ -77,18 +88,20 @@ export default function Reports() {
                   </tr>
                 </thead>
                 <tbody>
-                  {reports.map((r) => (
+                  {reports.map((r, idx) => (
                     <tr
                       key={r.id}
-                      className="hover:bg-gray-50 transition cursor-default"
+                      className={`transition cursor-default hover:bg-accent/10 ${
+                        idx % 2 === 0 ? "bg-background" : "bg-muted/5"
+                      }`}
                     >
-                      <td className="p-2 border">
+                      <td className="p-2 border text-foreground">
                         {new Date(r.date).toLocaleDateString()}
                       </td>
-                      <td className="p-2 border">{r.class_name}</td>
-                      <td className="p-2 border">{r.course_name}</td>
-                      <td className="p-2 border">{r.topic}</td>
-                      <td className="p-2 border text-center">
+                      <td className="p-2 border text-foreground">{r.class_name}</td>
+                      <td className="p-2 border text-foreground">{r.course_name}</td>
+                      <td className="p-2 border text-foreground">{r.topic}</td>
+                      <td className={`p-2 border text-center ${getAttendanceColor(r.attendance_percentage)}`}>
                         {r.attendance_percentage ?? "—"}%
                       </td>
                     </tr>

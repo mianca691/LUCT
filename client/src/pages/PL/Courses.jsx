@@ -1,17 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "@/components/ui/table";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, UserPlus, Loader2 } from "lucide-react";
 import api from "@/services/api.js";
@@ -107,7 +95,6 @@ export default function PLCourses() {
     setSelectedCourse(course);
     setAssignOpen(true);
     fetchLecturers();
-
     try {
       const res = await api.get(`/pl/courses/${course.course_id}/classes`);
       setClasses(res.data);
@@ -122,87 +109,109 @@ export default function PLCourses() {
     fetchFaculties();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-red-500 p-8">
+        <p>{error}</p>
+        <Button onClick={fetchCourses} variant="outline" className="mt-4">
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="p-8 space-y-6">
-      <div className="flex items-center justify-between">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Courses</h1>
-          <p className="text-gray-500 text-sm">
-            Manage courses and assign lecturers to modules.
+          <h1 className="text-3xl font-bold">Courses Management</h1>
+          <p className="text-gray-400 text-sm mt-1">
+            Add courses, assign lecturers, and view course overview.
           </p>
         </div>
-        <Button className="flex items-center gap-2" onClick={() => setAddCourseOpen(true)}>
+        <Button
+          className="flex items-center gap-2"
+          onClick={() => setAddCourseOpen(true)}
+        >
           <Plus className="w-4 h-4" /> Add Course
         </Button>
       </div>
 
-      {loading && (
-        <div className="flex justify-center items-center h-64">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        </div>
-      )}
-
-      {!loading && error && (
-        <div className="text-center text-red-500 p-8">
-          <p>{error}</p>
-          <Button onClick={fetchCourses} variant="outline" className="mt-4">
-            Retry
-          </Button>
-        </div>
-      )}
-
-      {!loading && !error && courses.length === 0 && (
+      {/* Courses Grid */}
+      {courses.length === 0 ? (
         <Card className="max-w-3xl mx-auto p-6 text-center text-gray-500">
           No courses found for your program.
         </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {courses.map((course) => (
+            <Card
+              key={course.course_id}
+              className="bg-card text-card-foreground shadow hover:shadow-lg transition"
+            >
+              <CardHeader className="flex justify-between items-start">
+                <div>
+                  <h2 className="text-lg font-bold">{course.course_code}</h2>
+                  <p className="text-sm text-gray-400">{course.course_name}</p>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <p className="text-sm">
+                  <span className="font-semibold">Lecturer(s): </span>
+                  {course.lecturers?.length
+                    ? course.lecturers.map((l) => l.name).join(", ")
+                    : "N/A"}
+                </p>
+                <p className="text-sm">
+                  <span className="font-semibold">Classes: </span>
+                  {course.classes_count ?? 0}
+                </p>
+                <p className="text-sm">
+                  <span className="font-semibold">Total Students: </span>
+                  {course.total_students ?? 0}
+                </p>
+                <div className="w-full mt-2">
+                  <span className="font-semibold text-sm">Average Attendance:</span>
+                  <div className="w-full bg-gray-700 rounded h-4 relative mt-1">
+                    <div
+                      className="bg-primary h-4 rounded"
+                      style={{
+                        width: `${course.avg_attendance ?? 0}%`,
+                        transition: "width 0.3s",
+                      }}
+                    />
+                    <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white">
+                      {Math.round(course.avg_attendance ?? 0)}%
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+              <CardContent className="flex justify-end gap-2 pt-0">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex items-center gap-2"
+                  onClick={() => openAssignModal(course)}
+                >
+                  <UserPlus className="w-4 h-4" />
+                  Assign Lecturer
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       )}
 
-      {!loading && !error && courses.length > 0 && (
-        <Card className="overflow-x-auto shadow-sm border">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Course List</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableCell className="font-semibold">Course Code</TableCell>
-                  <TableCell className="font-semibold">Course Name</TableCell>
-                  <TableCell className="font-semibold">Lecturer(s)</TableCell>
-                  <TableCell className="font-semibold">Classes</TableCell>
-                  <TableCell className="text-center font-semibold">Actions</TableCell>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {courses.map((course) => (
-                  <TableRow key={course.course_id}>
-                    <TableCell>{course.course_code || "—"}</TableCell>
-                    <TableCell>{course.course_name || "—"}</TableCell>
-                    <TableCell>
-                      {course.lecturers?.length
-                        ? course.lecturers.map((l) => l.name).join(", ")
-                        : "N/A"}
-                    </TableCell>
-                    <TableCell>{course.classes_count ?? 0}</TableCell>
-                    <TableCell className="text-center">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="flex items-center gap-2 mx-auto"
-                        onClick={() => openAssignModal(course)}
-                      >
-                        <UserPlus className="w-4 h-4" />
-                        Assign Lecturer
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
-
+      {/* Add Course Modal */}
       <Dialog open={addCourseOpen} onOpenChange={setAddCourseOpen}>
         <DialogContent>
           <DialogHeader>
@@ -225,7 +234,9 @@ export default function PLCourses() {
               </SelectTrigger>
               <SelectContent>
                 {faculties.map((f) => (
-                  <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+                  <SelectItem key={f.id} value={f.id}>
+                    {f.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -236,6 +247,7 @@ export default function PLCourses() {
         </DialogContent>
       </Dialog>
 
+      {/* Assign Lecturer Modal */}
       <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
         <DialogContent>
           <DialogHeader>
@@ -249,7 +261,9 @@ export default function PLCourses() {
               </SelectTrigger>
               <SelectContent>
                 {classes.map((cls) => (
-                  <SelectItem key={cls.id} value={cls.id}>{cls.name}</SelectItem>
+                  <SelectItem key={cls.id} value={cls.id}>
+                    {cls.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -259,7 +273,9 @@ export default function PLCourses() {
               </SelectTrigger>
               <SelectContent>
                 {lecturers.map((l) => (
-                  <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
+                  <SelectItem key={l.id} value={l.id}>
+                    {l.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>

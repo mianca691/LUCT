@@ -36,22 +36,23 @@ export default function Login() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-blue-50 p-6">
-      <img src="/logo.jpg" alt="logo" className="w-64 mb-6" />
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background p-6">
+      <img
+        src="/logo.jpg"
+        alt="LUCT Logo"
+        className="w-40 sm:w-52 md:w-64 rounded-md shadow-sm mb-6"
+      />
 
-      <Card className="w-[400px] shadow-lg border border-gray-200">
+      <Card className="w-full max-w-md shadow-lg border border-border bg-card text-foreground rounded-xl">
         <CardHeader>
-          <h2 className="text-xl font-semibold text-center text-gray-700">
+          <h2 className="text-2xl font-bold text-center text-primary mb-4">
             Login
           </h2>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
+            <div className="flex flex-col space-y-1">
+              <label htmlFor="email" className="font-medium">
                 Email
               </label>
               <Input
@@ -60,15 +61,13 @@ export default function Login() {
                 placeholder="Enter your email"
                 value={form.email}
                 onChange={handleChange}
+                className="border border-muted focus:border-primary focus:ring-primary"
                 required
               />
             </div>
 
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
+            <div className="flex flex-col space-y-1">
+              <label htmlFor="password" className="font-medium">
                 Password
               </label>
               <Input
@@ -77,33 +76,19 @@ export default function Login() {
                 placeholder="Enter your password"
                 value={form.password}
                 onChange={handleChange}
+                className="border mb-5 border-muted focus:border-primary focus:ring-primary"
                 required
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition"
+              disabled={loading}
+            >
               {loading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
-
-          {/* Demo Credentials Section */}
-          <div className="mt-6 border-t pt-4">
-            <h3 className="text-sm font-semibold text-gray-700 text-center mb-2">
-              Demo Credentials
-            </h3>
-            <div className="grid grid-cols-2 gap-3 text-xs text-gray-600">
-              {demoAccounts.map((acc) => (
-                <div
-                  key={acc.role}
-                  className="p-2 border rounded-lg bg-gray-50 hover:bg-gray-100 transition"
-                >
-                  <p className="font-semibold">{acc.role}</p>
-                  <p>Email: <span className="font-mono">{acc.email}</span></p>
-                  <p>Password: <span className="font-mono">{acc.password}</span></p>
-                </div>
-              ))}
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>

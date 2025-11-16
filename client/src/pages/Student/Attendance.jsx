@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext.jsx";
 import api from "@/services/api.js";
+
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 export default function Attendance() {
   const { token } = useAuth();
@@ -10,6 +13,7 @@ export default function Attendance() {
   const [reports, setReports] = useState([]);
   const [attendanceStatus, setAttendanceStatus] = useState({});
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("all");
 
   const fetchReports = async () => {
     setLoading(true);
@@ -49,62 +53,165 @@ export default function Attendance() {
     }
   };
 
-  if (loading) return <p className="p-8 text-center">Loading reports...</p>;
+  const filteredReports = useMemo(() => {
+    if (filter === "today") {
+      const today = new Date().toDateString();
+      return reports.filter((r) => new Date(r.date).toDateString() === today);
+    }
+    if (filter === "week") {
+      const now = new Date();
+      const weekAgo = new Date();
+      weekAgo.setDate(now.getDate() - 7);
+
+      return reports.filter((r) => {
+        const rd = new Date(r.date);
+        return rd >= weekAgo && rd <= now;
+      });
+    }
+    return reports;
+  }, [filter, reports]);
+
+  const stats = useMemo(() => {
+    const total = reports.length;
+    const pending = Object.values(attendanceStatus).filter((v) => !v).length;
+    const markedToday = reports.filter((r) => {
+      const status = attendanceStatus[r.id];
+      const today = new Date().toDateString();
+      return status && new Date(r.date).toDateString() === today;
+    }).length;
+
+    return {
+      total,
+      pending,
+      markedToday,
+    };
+  }, [reports, attendanceStatus]);
+
+  if (loading)
+    return <p className="p-8 text-center">Loading attendance...</p>;
 
   return (
-    <div className="p-8 space-y-6">
-      <Card className="max-w-4xl mx-auto">
-        <CardHeader>
-          <h2 className="text-xl font-semibold text-center">Mark Your Attendance</h2>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {reports.length === 0 ? (
-            <p>No lecture reports available for your classes.</p>
-          ) : (
-            <table className="w-full border text-sm">
-              <thead>
-                <tr>
-                  <th className="border p-2">Class</th>
-                  <th className="border p-2">Topic</th>
-                  <th className="border p-2">Date</th>
-                  <th className="border p-2">Status</th>
-                  <th className="border p-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {reports.map((r) => (
-                  <tr key={r.id}>
-                    <td className="border p-2">{r.class_name}</td>
-                    <td className="border p-2">{r.topic}</td>
-                    <td className="border p-2">{new Date(r.date).toLocaleDateString()}</td>
-                    <td className="border p-2 capitalize">
-                      {attendanceStatus[r.id] || "Not marked"}
-                    </td>
-                    <td className="border p-2 space-x-2">
-                      {!attendanceStatus[r.id] && (
-                        <>
-                          <Button
-                            variant="outline"
-                            onClick={() => handleMarkAttendance(r.id, "present")}
-                          >
-                            Present
-                          </Button>
-                          <Button
-                            variant="outline"
-                            onClick={() => handleMarkAttendance(r.id, "absent")}
-                          >
-                            Absent
-                          </Button>
-                        </>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </CardContent>
-      </Card>
+    <div className="p-8 space-y-10">
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold tracking-tight">
+          Attendance Overview
+        </h1>
+        <p className="text-muted-foreground">
+          Review your lectures and update your attendance status.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-sm text-muted-foreground">Total Lectures</p>
+            <p className="text-2xl font-semibold">{stats.total}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-sm text-muted-foreground">Pending Attendance</p>
+            <p className="text-2xl font-semibold">{stats.pending}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-sm text-muted-foreground">Marked Today</p>
+            <p className="text-2xl font-semibold">{stats.markedToday}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="flex gap-3">
+        {["all", "today", "week"].map((f) => (
+          <Button
+            key={f}
+            variant={filter === f ? "default" : "outline"}
+            onClick={() => setFilter(f)}
+            className="capitalize"
+          >
+            {f === "all" ? "All Lectures" : f === "today" ? "Today" : "This Week"}
+          </Button>
+        ))}
+      </div>
+
+      <Separator />
+
+      {filteredReports.length === 0 ? (
+        <p className="text-muted-foreground">No lecture reports found.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredReports.map((r) => {
+            const status = attendanceStatus[r.id];
+
+            return (
+              <Card
+                key={r.id}
+                className={`transition-all border-l-4 ${
+                  status === "present"
+                    ? "border-green-500"
+                    : status === "absent"
+                    ? "border-red-500"
+                    : "border-gray-400"
+                }`}
+              >
+                <CardHeader>
+                  <h2 className="text-lg font-semibold">{r.class_name}</h2>
+                  <p className="text-sm text-muted-foreground">{r.topic}</p>
+                </CardHeader>
+
+                <CardContent className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(r.date).toLocaleDateString()}
+                    </p>
+
+                    <Badge
+                      variant={
+                        status === "present"
+                          ? "success"
+                          : status === "absent"
+                          ? "destructive"
+                          : "outline"
+                      }
+                      className="capitalize"
+                    >
+                      {status || "Not Marked"}
+                    </Badge>
+                  </div>
+
+                  <div className="flex gap-3">
+                    {!status ? (
+                      <>
+                        <Button
+                          variant="outline"
+                          onClick={() => handleMarkAttendance(r.id, "present")}
+                          className="flex-1"
+                        >
+                          Present
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => handleMarkAttendance(r.id, "absent")}
+                          className="flex-1"
+                        >
+                          Absent
+                        </Button>
+                      </>
+                    ) : (
+                      <Button disabled className="w-full">
+                        Attendance Marked
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

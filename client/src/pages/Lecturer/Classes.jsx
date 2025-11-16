@@ -12,6 +12,7 @@ export default function Classes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Fetch classes from API
   const fetchClasses = async () => {
     setLoading(true);
     setError("");
@@ -32,6 +33,7 @@ export default function Classes() {
     fetchClasses();
   }, [token]);
 
+  // Format schedule time
   const formatTime = (timeStr) => {
     if (!timeStr) return "Not scheduled";
     const [hours, minutes] = timeStr.split(":");
@@ -41,7 +43,7 @@ export default function Classes() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
       </div>
     );
   }
@@ -49,7 +51,7 @@ export default function Classes() {
   if (error) {
     return (
       <div className="p-8 text-center">
-        <p className="text-red-500 mb-4">{error}</p>
+        <p className="text-destructive mb-4">{error}</p>
         <Button onClick={fetchClasses}>Retry</Button>
       </div>
     );
@@ -57,21 +59,23 @@ export default function Classes() {
 
   return (
     <div className="p-8 space-y-6">
-      <div>
+      {/* Header */}
+      <div className="space-y-2">
         <h1 className="text-2xl font-bold">Your Classes</h1>
-        <p className="text-gray-500">
+        <p className="text-muted-foreground">
           Here are the classes currently assigned to you.
         </p>
       </div>
 
+      {/* Empty State */}
       {classes.length === 0 ? (
-        <Card className="max-w-2xl mx-auto p-6 text-center text-gray-500">
+        <Card className="max-w-2xl mx-auto p-6 text-center text-muted-foreground">
           No classes assigned yet.
         </Card>
       ) : (
-        <Card className="overflow-x-auto shadow-sm border">
+        <Card className="overflow-x-auto shadow-sm border border-border rounded-xl">
           <table className="w-full text-sm text-left border-collapse">
-            <thead className="bg-gray-100 text-gray-700 text-sm uppercase">
+            <thead className="bg-card-foreground/10 text-muted-foreground text-sm uppercase sticky top-0 z-10">
               <tr>
                 <th className="p-3">Class Name</th>
                 <th className="p-3">Course</th>
@@ -85,24 +89,22 @@ export default function Classes() {
               {classes.map((cls, idx) => (
                 <tr
                   key={cls.id}
-                  className={`border-t hover:bg-gray-50 transition ${
-                    idx % 2 === 0 ? "bg-white" : "bg-gray-50/50"
+                  className={`border-t border-border transition hover:bg-accent/10 ${
+                    idx % 2 === 0 ? "bg-background" : "bg-muted/5"
                   }`}
                 >
-                  <td className="p-3 font-medium text-gray-900">
-                    {cls.class_name}
-                  </td>
-                  <td className="p-3">
+                  <td className="p-3 font-medium text-foreground">{cls.class_name}</td>
+                  <td className="p-3 text-foreground">
                     {cls.course_name} ({cls.course_code})
                   </td>
-                  <td className="p-3">{cls.venue || "-"}</td>
-                  <td className="p-3">{formatTime(cls.scheduled_time)}</td>
+                  <td className="p-3 text-foreground">{cls.venue || "-"}</td>
+                  <td className="p-3 text-foreground">{formatTime(cls.scheduled_time)}</td>
+                  <td className="p-3 text-center text-foreground">{cls.total_students ?? 0}</td>
                   <td className="p-3 text-center">
-                    {cls.total_students ?? 0}
-                  </td>
-                  <td className="p-3 text-center">
-                    <Button className="w-full" size="sm">
-                      <Link to={`/lecturer/submit-report`}>Submit Report</Link>
+                    <Button className="w-full" size="sm" variant="secondary">
+                      <Link to={`/lecturer/submit-report`} className="w-full block">
+                        Submit Report
+                      </Link>
                     </Button>
                   </td>
                 </tr>
