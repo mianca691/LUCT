@@ -10,7 +10,11 @@ import {
   updateClass, 
   deleteClass,
   getClassesForCourse,
-  getLecturerDetails
+  getLecturerDetails,
+  getRatings,
+  getMetrics,
+  submitRating,
+  getRatingById,
 } from "../controllers/plController.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 import { getLecturers } from "../controllers/lecturerController.js";
@@ -52,5 +56,11 @@ router.get("/monitoring/lecturers", getMonitoringLecturers);
 router.get("/reports/metrics", getReportMetrics);  
 router.get("/reports", getReports);                
 router.get("/reports/:id", getReportById); 
+
+router.get("/", getRatings);
+router.get("/metrics", getMetrics);
+router.post("/", submitRating);
+router.get("/:id", getRatingById);
+
 
 export default router;

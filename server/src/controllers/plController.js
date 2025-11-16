@@ -96,7 +96,12 @@ export const deleteCourse = async (req, res) => {
 
 export const getFaculties = async (req, res) => {
   try {
-    const result = await pool.query(`SELECT id, name FROM faculties ORDER BY name`);
+    const result = await pool.query(`
+      SELECT DISTINCT id, name 
+      FROM faculties
+      ORDER BY name
+    `);
+
     res.json(result.rows);
   } catch (err) {
     console.error("Error fetching faculties:", err);
@@ -104,9 +109,12 @@ export const getFaculties = async (req, res) => {
   }
 };
 
+
+
 export const getClasses = async (req, res) => {
   try {
-    const classesResult = await pool.query(`
+    const { faculty_id } = req.query; // get faculty filter from query
+    let query = `
       SELECT 
         cl.id,
         cl.class_name,
@@ -122,9 +130,20 @@ export const getClasses = async (req, res) => {
       INNER JOIN courses c ON cl.course_id = c.id
       LEFT JOIN users u ON cl.lecturer_id = u.id
       LEFT JOIN student_enrolments se ON cl.id = se.class_id
+    `;
+
+    const params = [];
+    if (faculty_id) {
+      query += ` WHERE c.faculty_id = $1`;
+      params.push(faculty_id);
+    }
+
+    query += `
       GROUP BY cl.id, c.id, u.name
       ORDER BY cl.class_name
-    `);
+    `;
+
+    const classesResult = await pool.query(query, params);
 
     const formattedClasses = classesResult.rows.map((cls) => ({
       ...cls,
@@ -137,6 +156,7 @@ export const getClasses = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch classes" });
   }
 };
+
 
 export const createClass = async (req, res) => {
   try {
@@ -240,53 +260,68 @@ export const getClassesForCourse = async (req, res) => {
 
 export const getLecturerDetails = async (req, res) => {
   try {
+    // First fetch lecturers only once with aggregated data
     const lecturersQuery = `
       SELECT
         u.id,
         u.name,
         u.email,
-        f.name AS faculty_name,
-        COUNT(DISTINCT c.id) AS courses_count,
-        COUNT(DISTINCT cl.id) AS classes_count,
-        ROUND(AVG(r.rating)::numeric, 2) AS rating
+        (
+          SELECT f.name
+          FROM courses c
+          JOIN faculties f ON f.id = c.faculty_id
+          JOIN classes cl ON cl.course_id = c.id
+          WHERE cl.lecturer_id = u.id
+          LIMIT 1
+        ) AS faculty_name,
+        (
+          SELECT COUNT(DISTINCT c2.id)
+          FROM courses c2
+          JOIN classes cl2 ON cl2.course_id = c2.id
+          WHERE cl2.lecturer_id = u.id
+        ) AS courses_count,
+        (
+          SELECT COUNT(*)
+          FROM classes cl3
+          WHERE cl3.lecturer_id = u.id
+        ) AS classes_count,
+        (
+          SELECT ROUND(AVG(r.rating)::numeric, 2)
+          FROM ratings r
+          JOIN classes cl4 ON cl4.id = r.class_id
+          WHERE cl4.lecturer_id = u.id
+        ) AS rating
       FROM users u
-      LEFT JOIN classes cl ON cl.lecturer_id = u.id
-      LEFT JOIN courses c ON c.id = cl.course_id
-      LEFT JOIN faculties f ON f.id = c.faculty_id
-      LEFT JOIN ratings r ON r.class_id = cl.id
       WHERE u.role = 'lecturer'
-      GROUP BY u.id, f.name
       ORDER BY u.name;
     `;
 
     const { rows } = await pool.query(lecturersQuery);
 
+    // Attach classes + courses
     const lecturerDetails = await Promise.all(
-      rows.map(async (lecturer) => {
-        // Courses
+      rows.map(async (lect) => {
         const coursesRes = await pool.query(
-          `
-          SELECT DISTINCT c.id, c.name
-          FROM courses c
-          JOIN classes cl ON cl.course_id = c.id
-          WHERE cl.lecturer_id = $1
-          `,
-          [lecturer.id]
+          `SELECT DISTINCT c.id, c.name
+           FROM courses c
+           JOIN classes cl ON cl.course_id = c.id
+           WHERE cl.lecturer_id = $1`,
+          [lect.id]
         );
 
         const classesRes = await pool.query(
-          `
-          SELECT cl.id, cl.class_name AS name
-          FROM classes cl
-          WHERE cl.lecturer_id = $1
-          `,
-          [lecturer.id]
+          `SELECT id, class_name AS name
+           FROM classes
+           WHERE lecturer_id = $1`,
+          [lect.id]
         );
 
         return {
-          ...lecturer,
+          ...lect,
+          faculty_name: lect.faculty_name || "Unknown",
+          rating: lect.rating || "Not Rated",
           courses: coursesRes.rows,
-          classes: classesRes.rows,
+          classes: classesRes.rows
         };
       })
     );
@@ -295,5 +330,125 @@ export const getLecturerDetails = async (req, res) => {
   } catch (err) {
     console.error("Error fetching lecturers:", err);
     res.status(500).json({ message: "Failed to load lecturers." });
+  }
+};
+
+export const getRatings = async (req, res) => {
+  try {
+    const { search, class_id, lecturer_id, week } = req.query;
+
+    let query = `
+      SELECT r.id, r.rating, r.comment, r.created_at,
+             c.class_name, c.course_id,
+             co.name AS course_name,
+             u.name AS lecturer_name, u.id AS lecturer_id,
+             c.id AS class_id, lr.week
+      FROM ratings r
+      JOIN classes c ON r.class_id = c.id
+      JOIN courses co ON c.course_id = co.id
+      JOIN users u ON r.user_id = u.id
+      LEFT JOIN lecture_reports lr ON lr.class_id = c.id
+      WHERE 1=1
+    `;
+
+    const params = [];
+
+    if (search) {
+      params.push(`%${search}%`);
+      query += ` AND (c.class_name ILIKE $${params.length} OR co.name ILIKE $${params.length} OR u.name ILIKE $${params.length})`;
+    }
+    if (class_id) {
+      params.push(class_id);
+      query += ` AND c.id = $${params.length}`;
+    }
+    if (lecturer_id) {
+      params.push(lecturer_id);
+      query += ` AND u.id = $${params.length}`;
+    }
+    if (week) {
+      params.push(week);
+      query += ` AND lr.week = $${params.length}`;
+    }
+
+    query += " ORDER BY r.created_at DESC";
+
+    const { rows } = await pool.query(query, params);
+    res.json(rows);
+  } catch (err) {
+    console.error("Error fetching ratings:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+/**
+ * Get metrics for Ratings Dashboard
+ */
+export const getMetrics = async (req, res) => {
+  try {
+    const totalRatings = await pool.query("SELECT COUNT(*) FROM ratings");
+    const avgRating = await pool.query("SELECT AVG(rating) FROM ratings");
+    const totalLecturers = await pool.query(`
+      SELECT COUNT(DISTINCT u.id) FROM ratings r
+      JOIN users u ON r.user_id = u.id
+      WHERE u.role='lecturer'
+    `);
+    const totalClasses = await pool.query("SELECT COUNT(DISTINCT class_id) FROM ratings");
+
+    res.json({
+      total_ratings: Number(totalRatings.rows[0].count) || 0,
+      avg_rating: parseFloat(avgRating.rows[0].avg) || 0,
+      total_lecturers: Number(totalLecturers.rows[0].count) || 0,
+      total_classes: Number(totalClasses.rows[0].count) || 0,
+    });
+  } catch (err) {
+    console.error("Error fetching metrics:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+/**
+ * Submit a new rating
+ */
+export const submitRating = async (req, res) => {
+  try {
+    const { class_id, user_id, rating, comment } = req.body;
+
+    // Basic validation
+    if (!class_id || !user_id || !rating) {
+      return res.status(400).json({ error: "class_id, user_id, and rating are required" });
+    }
+
+    const result = await pool.query(
+      "INSERT INTO ratings (class_id, user_id, rating, comment) VALUES ($1, $2, $3, $4) RETURNING *",
+      [class_id, user_id, rating, comment]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error("Error submitting rating:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+/**
+ * Get rating by ID
+ */
+export const getRatingById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rows } = await pool.query(
+      `SELECT r.*, c.class_name, co.name AS course_name, u.name AS lecturer_name
+       FROM ratings r
+       JOIN classes c ON r.class_id = c.id
+       JOIN courses co ON c.course_id = co.id
+       JOIN users u ON r.user_id = u.id
+       WHERE r.id = $1`,
+      [id]
+    );
+    if (!rows[0]) return res.status(404).json({ error: "Rating not found" });
+    res.json(rows[0]);
+  } catch (err) {
+    console.error("Error fetching rating:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
